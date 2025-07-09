@@ -1,0 +1,31 @@
+export interface CampaignData {
+  name: string;
+  marketingGoal: string;
+  optimizationTarget: string;
+  priority: string;
+  promotionScenario: string;
+  placements: string[];
+  deviceTypes: string[];
+  productId: number | null;
+  originalPrice: number;
+  currentPrice: number;
+  hasTimeLimitedDiscount: boolean;
+  discountPercentage: number;
+  hasFullReduction: boolean;
+  fullReductionThreshold: number;
+  fullReductionAmount: number;
+  ageRange: string;
+  gender: string;
+  location: string;
+  interests: string[];
+  behaviors: string[];
+  campaignType: string;
+  startTime: Date | null;
+  endTime: Date | null;
+  totalBudget: number;
+  dailyBudget: number;
+  biddingStrategy: string;
+  clickBid: number;
+  weeklySchedule: boolean[];
+  status: string;
+}
