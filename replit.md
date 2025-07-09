@@ -13,13 +13,13 @@ Port configuration: Frontend 3000, Backend 5000 (standard development ports).
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React 18 with TypeScript
+- **Framework**: Vue 3 with TypeScript and Composition API
 - **Build Tool**: Vite for fast development and optimized builds
 - **Styling**: Tailwind CSS with custom design system
-- **UI Components**: Radix UI primitives with shadcn/ui component library
-- **State Management**: React hooks for local state, TanStack Query for server state
-- **Routing**: Wouter for lightweight client-side routing
-- **Charts**: Recharts for data visualization
+- **UI Components**: Custom Vue components with responsive design
+- **State Management**: Pinia for global state, TanStack Vue Query for server state
+- **Routing**: Vue Router for client-side routing
+- **Form Validation**: VeeValidate with Zod integration
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
@@ -81,12 +81,12 @@ Port configuration: Frontend 3000, Backend 5000 (standard development ports).
 ## External Dependencies
 
 ### Core Dependencies
-- **React Ecosystem**: React, React DOM, React Query
-- **UI Framework**: Radix UI components, Tailwind CSS
+- **Vue Ecosystem**: Vue 3, Vue Router, Pinia, TanStack Vue Query
+- **UI Framework**: Custom components with Tailwind CSS
 - **Database**: Drizzle ORM, Neon Database serverless driver
-- **Validation**: Zod for runtime type checking
-- **Charts**: Recharts for data visualization
-- **Utilities**: date-fns, clsx, class-variance-authority
+- **Validation**: VeeValidate with Zod integration
+- **Form Handling**: Vue 3 Composition API reactive forms
+- **Utilities**: VueUse composables, date-fns
 
 ### Development Dependencies
 - **Build Tools**: Vite, esbuild, TypeScript

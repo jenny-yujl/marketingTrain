@@ -1,9 +1,9 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import vue from "@vitejs/plugin-vue";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [vue()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client/src"),
@@ -20,10 +20,11 @@ export default defineConfig({
       },
     },
   },
+  root: "./client",
   build: {
-    outDir: "dist/public",
+    outDir: "../dist/public",
     rollupOptions: {
-      input: "./client/index.html",
+      input: "./index.html",
     },
   },
 });
