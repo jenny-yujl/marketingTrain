@@ -17,37 +17,54 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // Database storage will be implemented when MySQL is configured
   async getCampaign(id: number): Promise<Campaign | undefined> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
+    return campaign || undefined;
   }
 
   async getCampaigns(): Promise<Campaign[]> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    return await db.select().from(campaigns);
   }
 
   async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    const result = await db.insert(campaigns).values(insertCampaign);
+    // MySQL返回insertId，获取新创建的记录
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, result[0].insertId));
+    return campaign;
   }
 
   async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    await db.update(campaigns).set({ ...updateData, updatedAt: new Date() }).where(eq(campaigns.id, id));
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
+    if (!campaign) throw new Error(`Campaign with id ${id} not found`);
+    return campaign;
   }
 
   async deleteCampaign(id: number): Promise<void> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    await db.delete(campaigns).where(eq(campaigns.id, id));
   }
 
   async getProduct(id: number): Promise<Product | undefined> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product || undefined;
   }
 
   async getProducts(): Promise<Product[]> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    return await db.select().from(products);
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    throw new Error("Database storage not available - using memory storage instead");
+    if (!db) throw new Error("Database not connected");
+    const result = await db.insert(products).values(insertProduct);
+    const [product] = await db.select().from(products).where(eq(products.id, result[0].insertId));
+    return product;
   }
 }
 
@@ -182,4 +199,16 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// 导入数据库连接
+import { db } from "./db";
+
+// 检查数据库连接并选择合适的存储
+const isDatabaseAvailable = () => db !== null;
+
+export const storage = isDatabaseAvailable() ? new DatabaseStorage() : new MemStorage();
+
+// 如果使用内存存储，提示用户
+if (!isDatabaseAvailable()) {
+  console.log("📝 当前使用内存存储 - 数据在重启后会丢失");
+  console.log("💡 要使用MySQL持久存储，请设置MYSQL_DATABASE_URL环境变量");
+}
