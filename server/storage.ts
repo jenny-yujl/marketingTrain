@@ -1,4 +1,6 @@
 import { campaigns, products, type Campaign, type Product, type InsertCampaign, type InsertProduct } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Campaign operations
@@ -12,6 +14,63 @@ export interface IStorage {
   getProduct(id: number): Promise<Product | undefined>;
   getProducts(): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
+}
+
+export class DatabaseStorage implements IStorage {
+  async getCampaign(id: number): Promise<Campaign | undefined> {
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
+    return campaign || undefined;
+  }
+
+  async getCampaigns(): Promise<Campaign[]> {
+    return await db.select().from(campaigns);
+  }
+
+  async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
+    const campaignData: any = { ...insertCampaign };
+    const [campaign] = await db
+      .insert(campaigns)
+      .values(campaignData)
+      .returning();
+    return campaign;
+  }
+
+  async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
+    const updateObject: any = { ...updateData, updatedAt: new Date() };
+    
+    const [campaign] = await db
+      .update(campaigns)
+      .set(updateObject)
+      .where(eq(campaigns.id, id))
+      .returning();
+    
+    if (!campaign) {
+      throw new Error(`Campaign with id ${id} not found`);
+    }
+    
+    return campaign;
+  }
+
+  async deleteCampaign(id: number): Promise<void> {
+    await db.delete(campaigns).where(eq(campaigns.id, id));
+  }
+
+  async getProduct(id: number): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product || undefined;
+  }
+
+  async getProducts(): Promise<Product[]> {
+    return await db.select().from(products);
+  }
+
+  async createProduct(insertProduct: InsertProduct): Promise<Product> {
+    const [product] = await db
+      .insert(products)
+      .values(insertProduct)
+      .returning();
+    return product;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -135,4 +194,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
