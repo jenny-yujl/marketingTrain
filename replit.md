@@ -7,19 +7,18 @@ This is a full-stack web application for managing advertising campaigns, specifi
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
-User requested cross-platform deployment capability for both Windows and Linux environments.
-Port configuration: Frontend 3000, Backend 5000 (standard development ports).
+User requested local server deployment capability.
 
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: Vue 3 with TypeScript and Composition API
+- **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite for fast development and optimized builds
 - **Styling**: Tailwind CSS with custom design system
-- **UI Components**: Custom Vue components with responsive design
-- **State Management**: Pinia for global state, TanStack Vue Query for server state
-- **Routing**: Vue Router for client-side routing
-- **Form Validation**: VeeValidate with Zod integration
+- **UI Components**: Radix UI primitives with shadcn/ui component library
+- **State Management**: React hooks for local state, TanStack Query for server state
+- **Routing**: Wouter for lightweight client-side routing
+- **Charts**: Recharts for data visualization
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
@@ -81,12 +80,12 @@ Port configuration: Frontend 3000, Backend 5000 (standard development ports).
 ## External Dependencies
 
 ### Core Dependencies
-- **Vue Ecosystem**: Vue 3, Vue Router, Pinia, TanStack Vue Query
-- **UI Framework**: Custom components with Tailwind CSS
+- **React Ecosystem**: React, React DOM, React Query
+- **UI Framework**: Radix UI components, Tailwind CSS
 - **Database**: Drizzle ORM, Neon Database serverless driver
-- **Validation**: VeeValidate with Zod integration
-- **Form Handling**: Vue 3 Composition API reactive forms
-- **Utilities**: VueUse composables, date-fns
+- **Validation**: Zod for runtime type checking
+- **Charts**: Recharts for data visualization
+- **Utilities**: date-fns, clsx, class-variance-authority
 
 ### Development Dependencies
 - **Build Tools**: Vite, esbuild, TypeScript
@@ -114,21 +113,5 @@ Port configuration: Frontend 3000, Backend 5000 (standard development ports).
 - **PostgreSQL Integration**: Neon Database with persistent storage replacing memory storage
 - **Schema Export**: Complete SQL schema available in `database_schema.sql`
 - **Type Safety**: Generated TypeScript types from database schema via Drizzle ORM
-
-### Cross-Platform Deployment
-- **Windows Support**: Native batch scripts with automatic dependency checking
-- **Linux Support**: Shell scripts with Unix-style process management  
-- **macOS Support**: Uses Linux scripts for compatibility
-- **Auto-Detection**: JavaScript-based launcher that detects OS automatically
-- **Port Configuration**: Frontend 3000, Backend 5000 (standard development ports)
-- **Dependencies**: cross-env package for environment variable handling across platforms
-
-### Deployment Files
-- `start-cross-platform.js`: Universal launcher with OS detection
-- `start-full-windows.bat`: Interactive Windows launcher with menu options
-- `start-linux.sh`: Linux/macOS shell script with process management
-- `start.js`: Simplified cross-platform launcher
-- `CROSS_PLATFORM_DEPLOYMENT.md`: Complete deployment documentation
-- `WINDOWS_DEPLOYMENT.md`: Windows-specific installation guide
 
 The application follows a modern full-stack architecture with emphasis on type safety, developer experience, and scalable design patterns. The system is designed to be easily extensible for additional features like user authentication, advanced analytics, and integration with external advertising platforms.

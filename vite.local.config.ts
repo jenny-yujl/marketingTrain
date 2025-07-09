@@ -1,21 +1,9 @@
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import Components from 'unplugin-vue-components/vite'
-import AutoImport from 'unplugin-auto-import/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    AutoImport({
-      resolvers: [ElementPlusResolver()],
-      imports: ['vue', 'vue-router', 'pinia']
-    }),
-    Components({
-      resolvers: [ElementPlusResolver()],
-    }),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client/src"),
@@ -32,11 +20,10 @@ export default defineConfig({
       },
     },
   },
-  root: "./client",
   build: {
-    outDir: "../dist/public",
+    outDir: "dist/public",
     rollupOptions: {
-      input: "./index.html",
+      input: "./client/index.html",
     },
   },
 });
