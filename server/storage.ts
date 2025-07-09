@@ -1,5 +1,4 @@
 import { campaigns, products, type Campaign, type Product, type InsertCampaign, type InsertProduct } from "@shared/schema";
-import { db } from "./db";
 import { eq } from "drizzle-orm";
 
 export interface IStorage {
@@ -18,25 +17,28 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getCampaign(id: number): Promise<Campaign | undefined> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
     return campaign || undefined;
   }
 
   async getCampaigns(): Promise<Campaign[]> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     return await db.select().from(campaigns);
   }
 
   async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     const result = await db.insert(campaigns).values(insertCampaign);
-    // MySQL返回insertId，获取新创建的记录
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, result[0].insertId));
     return campaign;
   }
 
   async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     await db.update(campaigns).set({ ...updateData, updatedAt: new Date() }).where(eq(campaigns.id, id));
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
@@ -45,22 +47,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteCampaign(id: number): Promise<void> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     await db.delete(campaigns).where(eq(campaigns.id, id));
   }
 
   async getProduct(id: number): Promise<Product | undefined> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     const [product] = await db.select().from(products).where(eq(products.id, id));
     return product || undefined;
   }
 
   async getProducts(): Promise<Product[]> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     return await db.select().from(products);
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
+    const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     const result = await db.insert(products).values(insertProduct);
     const [product] = await db.select().from(products).where(eq(products.id, result[0].insertId));
@@ -199,16 +205,15 @@ export class MemStorage implements IStorage {
   }
 }
 
-// 导入数据库连接
-import { db } from "./db";
-
 // 检查数据库连接并选择合适的存储
-const isDatabaseAvailable = () => db !== null;
+const checkDatabaseConnection = async () => {
+  const { db } = await import("./db");
+  return db !== null;
+};
 
-export const storage = isDatabaseAvailable() ? new DatabaseStorage() : new MemStorage();
+// 暂时使用内存存储，稍后可动态切换
+export const storage = new MemStorage();
 
-// 如果使用内存存储，提示用户
-if (!isDatabaseAvailable()) {
-  console.log("📝 当前使用内存存储 - 数据在重启后会丢失");
-  console.log("💡 要使用MySQL持久存储，请设置MYSQL_DATABASE_URL环境变量");
-}
+// 提示用户设置环境变量
+console.log("📝 当前使用内存存储 - 数据在重启后会丢失");
+console.log("💡 要使用MySQL持久存储，请设置MYSQL_DATABASE_URL环境变量");

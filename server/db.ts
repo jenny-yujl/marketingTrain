@@ -2,8 +2,8 @@ import mysql from 'mysql2/promise';
 import { drizzle } from 'drizzle-orm/mysql2';
 import * as schema from "@shared/schema";
 
-// 检查是否有MySQL连接字符串
-const mysqlUrl = process.env.MYSQL_DATABASE_URL;
+// 检查是否有MySQL连接字符串 
+const mysqlUrl = process.env.MYSQL_DATABASE_URL || process.env.DATABASE_URL;
 
 let db: any = null;
 
