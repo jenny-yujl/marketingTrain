@@ -7,6 +7,7 @@ This is a full-stack web application for managing advertising campaigns, specifi
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+User requested local server deployment capability.
 
 ## System Architecture
 
