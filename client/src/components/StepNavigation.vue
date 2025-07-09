@@ -1,52 +1,87 @@
 <template>
-  <nav class="p-6">
-    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-      配置步骤
-    </h2>
-    
-    <ul class="space-y-2">
-      <li v-for="step in steps" :key="step.id">
-        <button
-          @click="$emit('stepChange', step.id)"
-          :class="[
-            'w-full text-left px-4 py-3 rounded-lg transition-colors',
-            activeStep === step.id
-              ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-l-4 border-blue-600'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-          ]"
-        >
-          <div class="flex items-center space-x-3">
-            <div 
-              :class="[
-                'w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium',
-                activeStep === step.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
-              ]"
-            >
-              {{ step.id }}
-            </div>
-            <span class="font-medium">{{ step.name }}</span>
-          </div>
-        </button>
-      </li>
-    </ul>
-  </nav>
+  <div class="step-navigation">
+    <el-steps :active="activeStep - 1" :space="200" align-center>
+      <el-step
+        v-for="step in steps"
+        :key="step.id"
+        :title="step.name"
+        :icon="getStepIcon(step.id)"
+        class="step-item"
+        @click="handleStepClick(step.id)"
+      />
+    </el-steps>
+  </div>
 </template>
 
-<script setup lang="ts">
-interface Step {
-  id: number
-  name: string
-}
+<script>
+import { Target, ShoppingCart, Users, Money, BarChart } from '@element-plus/icons-vue'
 
-interface Props {
-  steps: Step[]
-  activeStep: number
+export default {
+  name: 'StepNavigation',
+  components: {
+    Target,
+    ShoppingCart,
+    Users,
+    Money,
+    BarChart
+  },
+  props: {
+    steps: {
+      type: Array,
+      required: true
+    },
+    activeStep: {
+      type: Number,
+      required: true
+    }
+  },
+  emits: ['step-change'],
+  methods: {
+    handleStepClick(stepId) {
+      this.$emit('step-change', stepId)
+    },
+    getStepIcon(stepId) {
+      const iconMap = {
+        1: Target,
+        2: ShoppingCart,
+        3: Users,
+        4: Money,
+        5: BarChart
+      }
+      return iconMap[stepId] || Target
+    }
+  }
 }
-
-defineProps<Props>()
-defineEmits<{
-  stepChange: [stepId: number]
-}>()
 </script>
+
+<style scoped>
+.step-navigation {
+  margin-bottom: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.step-item {
+  cursor: pointer;
+}
+
+:deep(.el-step__title) {
+  font-size: 14px;
+  color: #606266;
+}
+
+:deep(.el-step__title.is-finish) {
+  color: #67c23a;
+}
+
+:deep(.el-step__title.is-process) {
+  color: #409eff;
+  font-weight: 600;
+}
+
+:deep(.el-step__icon) {
+  font-size: 20px;
+}
+</style>

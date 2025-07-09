@@ -1,173 +1,312 @@
 <template>
-  <div class="space-y-6">
-    <div>
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-        商品设置
-      </h2>
-      <p class="text-gray-600 dark:text-gray-400">
-        配置推广商品信息和优惠策略
-      </p>
-    </div>
-
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-      <div class="space-y-6">
-        <!-- 商品选择 -->
-        <div>
-          <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-            选择商品
-          </label>
-          <select
-            v-model="localData.productId"
-            @change="updateData"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-          >
-            <option :value="null">请选择商品</option>
-            <option v-for="product in products" :key="product.id" :value="product.id">
-              {{ product.name }} - ¥{{ product.price }}
-            </option>
-          </select>
+  <div class="product-settings">
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <h3>商品设置</h3>
+          <p>配置推广商品的基本信息和促销策略</p>
         </div>
+      </template>
 
-        <!-- 价格设置 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-              原价 (¥)
-            </label>
-            <input
-              v-model.number="localData.originalPrice"
-              @input="updateData"
-              type="number"
-              min="0"
-              step="0.01"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+      <el-form :model="formData" label-width="120px" @submit.prevent>
+        <!-- 商品选择 -->
+        <el-form-item label="选择商品" required>
+          <el-select 
+            v-model="formData.productId" 
+            placeholder="请选择要推广的商品"
+            @change="handleProductChange"
+            filterable
+          >
+            <el-option
+              v-for="product in products"
+              :key="product.id"
+              :label="product.name"
+              :value="product.id"
+            >
+              <div class="product-option">
+                <span class="product-name">{{ product.name }}</span>
+                <span class="product-price">¥{{ product.price }}</span>
+              </div>
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <!-- 商品价格设置 -->
+        <div v-if="selectedProduct">
+          <el-form-item label="原价">
+            <el-input-number
+              v-model="formData.originalPrice"
+              :min="0"
+              :precision="2"
+              controls-position="right"
+              @change="updateData"
             />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-              现价 (¥)
-            </label>
-            <input
-              v-model.number="localData.currentPrice"
-              @input="updateData"
-              type="number"
-              min="0"
-              step="0.01"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+            <span class="price-unit">元</span>
+          </el-form-item>
+
+          <el-form-item label="现价">
+            <el-input-number
+              v-model="formData.currentPrice"
+              :min="0"
+              :precision="2"
+              controls-position="right"
+              @change="updateData"
             />
-          </div>
+            <span class="price-unit">元</span>
+          </el-form-item>
         </div>
 
         <!-- 限时折扣 -->
-        <div class="space-y-4">
-          <div class="flex items-center">
-            <input
-              v-model="localData.hasTimeLimitedDiscount"
+        <el-form-item label="限时折扣">
+          <el-switch
+            v-model="formData.hasTimeLimitedDiscount"
+            @change="updateData"
+          />
+          <span class="switch-label">开启限时折扣活动</span>
+        </el-form-item>
+
+        <el-form-item v-if="formData.hasTimeLimitedDiscount" label="折扣比例">
+          <el-slider
+            v-model="formData.discountPercentage"
+            :min="5"
+            :max="90"
+            :step="5"
+            show-stops
+            show-input
+            @change="updateData"
+          />
+          <span class="discount-label">%</span>
+        </el-form-item>
+
+        <!-- 满减活动 -->
+        <el-form-item label="满减活动">
+          <el-switch
+            v-model="formData.hasFullReduction"
+            @change="updateData"
+          />
+          <span class="switch-label">开启满减优惠</span>
+        </el-form-item>
+
+        <div v-if="formData.hasFullReduction">
+          <el-form-item label="满减门槛">
+            <el-input-number
+              v-model="formData.fullReductionThreshold"
+              :min="1"
+              :precision="2"
+              controls-position="right"
               @change="updateData"
-              type="checkbox"
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label class="ml-2 text-sm font-medium text-gray-900 dark:text-white">
-              启用限时折扣
-            </label>
-          </div>
-          
-          <div v-if="localData.hasTimeLimitedDiscount">
-            <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-              折扣比例 (%)
-            </label>
-            <input
-              v-model.number="localData.discountPercentage"
-              @input="updateData"
-              type="number"
-              min="0"
-              max="100"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+            <span class="price-unit">元</span>
+          </el-form-item>
+
+          <el-form-item label="减免金额">
+            <el-input-number
+              v-model="formData.fullReductionAmount"
+              :min="1"
+              :precision="2"
+              controls-position="right"
+              @change="updateData"
             />
-          </div>
+            <span class="price-unit">元</span>
+          </el-form-item>
         </div>
 
-        <!-- 满减优惠 -->
-        <div class="space-y-4">
-          <div class="flex items-center">
-            <input
-              v-model="localData.hasFullReduction"
-              @change="updateData"
-              type="checkbox"
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label class="ml-2 text-sm font-medium text-gray-900 dark:text-white">
-              启用满减优惠
-            </label>
-          </div>
-          
-          <div v-if="localData.hasFullReduction" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                满减门槛 (¥)
-              </label>
-              <input
-                v-model.number="localData.fullReductionThreshold"
-                @input="updateData"
-                type="number"
-                min="0"
-                step="0.01"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                减免金额 (¥)
-              </label>
-              <input
-                v-model.number="localData.fullReductionAmount"
-                @input="updateData"
-                type="number"
-                min="0"
-                step="0.01"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-              />
+        <!-- 商品预览 -->
+        <el-card v-if="selectedProduct" class="product-preview" shadow="never">
+          <template #header>
+            <span>商品预览</span>
+          </template>
+          <div class="product-info">
+            <div class="product-details">
+              <h4>{{ selectedProduct.name }}</h4>
+              <p class="product-desc">{{ selectedProduct.description }}</p>
+              <div class="price-info">
+                <span class="current-price">¥{{ formData.currentPrice }}</span>
+                <span v-if="formData.originalPrice > formData.currentPrice" class="original-price">
+                  ¥{{ formData.originalPrice }}
+                </span>
+                <span v-if="discountRate > 0" class="discount-rate">
+                  {{ discountRate }}折
+                </span>
+              </div>
+              <div v-if="formData.hasFullReduction" class="promotion-info">
+                <el-tag type="danger" size="small">
+                  满{{ formData.fullReductionThreshold }}减{{ formData.fullReductionAmount }}
+                </el-tag>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </el-card>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
-import type { CampaignData } from '../lib/types'
+<script>
+import { computed, reactive, ref, watch, onMounted } from 'vue'
 
-interface Props {
-  data: CampaignData
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  change: [updates: Partial<CampaignData>]
-}>()
-
-const localData = ref({ ...props.data })
-
-// 获取商品列表
-const { data: products } = useQuery({
-  queryKey: ['products'],
-  queryFn: async () => {
-    const response = await fetch('/api/products')
-    if (!response.ok) {
-      throw new Error('Failed to fetch products')
+export default {
+  name: 'ProductSettings',
+  props: {
+    data: {
+      type: Object,
+      required: true
     }
-    return response.json()
-  }
-})
+  },
+  emits: ['update'],
+  setup(props, { emit }) {
+    const products = ref([
+      { id: 1, name: '高端智能手机', price: 3999, description: '最新款智能手机，性能强劲' },
+      { id: 2, name: '时尚运动鞋', price: 599, description: '舒适透气，适合运动和日常穿着' },
+      { id: 3, name: '护肤套装', price: 299, description: '天然成分，温和护肤' },
+      { id: 4, name: '咖啡机', price: 1299, description: '专业级咖啡机，在家享受咖啡店品质' },
+      { id: 5, name: '蓝牙耳机', price: 199, description: '无线蓝牙耳机，音质清晰' }
+    ])
 
-const updateData = () => {
-  emit('change', localData.value)
+    const formData = reactive({
+      productId: props.data.productId || null,
+      originalPrice: props.data.originalPrice || 0,
+      currentPrice: props.data.currentPrice || 0,
+      hasTimeLimitedDiscount: props.data.hasTimeLimitedDiscount || false,
+      discountPercentage: props.data.discountPercentage || 0,
+      hasFullReduction: props.data.hasFullReduction || false,
+      fullReductionThreshold: props.data.fullReductionThreshold || 0,
+      fullReductionAmount: props.data.fullReductionAmount || 0
+    })
+
+    // 计算属性
+    const selectedProduct = computed(() => {
+      return products.value.find(p => p.id === formData.productId) || null
+    })
+
+    const discountRate = computed(() => {
+      if (formData.originalPrice > 0 && formData.currentPrice > 0) {
+        return Math.round((formData.currentPrice / formData.originalPrice) * 10)
+      }
+      return 0
+    })
+
+    // 方法
+    const handleProductChange = (productId) => {
+      const product = products.value.find(p => p.id === productId)
+      if (product) {
+        formData.originalPrice = product.price
+        formData.currentPrice = product.price
+      }
+      updateData()
+    }
+
+    const updateData = () => {
+      emit('update', { ...formData })
+    }
+
+    // 监听props变化同步到formData
+    watch(() => props.data, (newData) => {
+      Object.assign(formData, newData)
+    }, { deep: true })
+
+    return {
+      products,
+      formData,
+      selectedProduct,
+      discountRate,
+      handleProductChange,
+      updateData
+    }
+  }
+}
+</script>
+
+<style scoped>
+.product-settings {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-watch(() => props.data, (newData) => {
-  localData.value = { ...newData }
-}, { deep: true })
-</script>
+.card-header h3 {
+  margin: 0 0 8px 0;
+  color: #303133;
+}
+
+.card-header p {
+  margin: 0;
+  color: #606266;
+  font-size: 14px;
+}
+
+.product-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-name {
+  color: #303133;
+}
+
+.product-price {
+  color: #f56c6c;
+  font-weight: 500;
+}
+
+.price-unit, .discount-label {
+  margin-left: 8px;
+  color: #909399;
+}
+
+.switch-label {
+  margin-left: 12px;
+  color: #606266;
+}
+
+.product-preview {
+  margin-top: 20px;
+}
+
+.product-info {
+  display: flex;
+  align-items: flex-start;
+}
+
+.product-details h4 {
+  margin: 0 0 8px 0;
+  color: #303133;
+}
+
+.product-desc {
+  margin: 0 0 12px 0;
+  color: #606266;
+  font-size: 14px;
+}
+
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.current-price {
+  font-size: 18px;
+  color: #f56c6c;
+  font-weight: 600;
+}
+
+.original-price {
+  font-size: 14px;
+  color: #909399;
+  text-decoration: line-through;
+}
+
+.discount-rate {
+  background: #f56c6c;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.promotion-info {
+  margin-top: 8px;
+}
+</style>

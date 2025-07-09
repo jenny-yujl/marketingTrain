@@ -1,18 +1,49 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-    <div class="text-center">
-      <h1 class="text-6xl font-bold text-gray-900 dark:text-white mb-4">404</h1>
-      <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">页面未找到</p>
-      <router-link 
-        to="/" 
-        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-      >
-        返回首页
-      </router-link>
-    </div>
+  <div class="not-found">
+    <el-result
+      icon="warning"
+      title="404"
+      sub-title="抱歉，您访问的页面不存在"
+    >
+      <template #extra>
+        <el-button type="primary" @click="goHome">
+          <el-icon><House /></el-icon>
+          返回首页
+        </el-button>
+      </template>
+    </el-result>
   </div>
 </template>
 
-<script setup lang="ts">
-// 404页面组件
+<script>
+import { useRouter } from 'vue-router'
+import { House } from '@element-plus/icons-vue'
+
+export default {
+  name: 'NotFound',
+  components: {
+    House
+  },
+  setup() {
+    const router = useRouter()
+    
+    const goHome = () => {
+      router.push('/')
+    }
+    
+    return {
+      goHome
+    }
+  }
+}
 </script>
+
+<style scoped>
+.not-found {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+}
+</style>
