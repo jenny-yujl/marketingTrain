@@ -28,21 +28,26 @@ export class DatabaseStorage implements IStorage {
 
   async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
     const campaignData: any = { ...insertCampaign };
-    const [campaign] = await db
+    const result = await db
       .insert(campaigns)
-      .values(campaignData)
-      .returning();
+      .values(campaignData);
+    
+    // For MySQL, we need to get the inserted ID and fetch the record
+    const insertId = result[0].insertId;
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, insertId));
     return campaign;
   }
 
   async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
     const updateObject: any = { ...updateData, updatedAt: new Date() };
     
-    const [campaign] = await db
+    await db
       .update(campaigns)
       .set(updateObject)
-      .where(eq(campaigns.id, id))
-      .returning();
+      .where(eq(campaigns.id, id));
+    
+    // For MySQL, fetch the updated record
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
     
     if (!campaign) {
       throw new Error(`Campaign with id ${id} not found`);
@@ -65,10 +70,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const [product] = await db
+    const result = await db
       .insert(products)
-      .values(insertProduct)
-      .returning();
+      .values(insertProduct);
+    
+    // For MySQL, we need to get the inserted ID and fetch the record
+    const insertId = result[0].insertId;
+    const [product] = await db.select().from(products).where(eq(products.id, insertId));
     return product;
   }
 }
@@ -194,4 +202,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();
