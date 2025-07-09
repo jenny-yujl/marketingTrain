@@ -86,7 +86,7 @@ function startServers() {
   const backend = spawn('npm', ['run', 'dev'], {
     stdio: 'inherit',
     shell: isWindows, // Windows需要shell
-    env: { ...process.env, NODE_ENV: 'development', PORT: '5100' }
+    env: { ...process.env, NODE_ENV: 'development', PORT: '5000' }
   });
 
   backend.on('error', (error) => {
@@ -113,8 +113,8 @@ function startServers() {
   });
 
   console.log('📱 服务器启动中...');
-  console.log('🌐 前端地址: http://localhost:3100');
-  console.log('🔧 后端API: http://localhost:5100');
+  console.log('🌐 前端地址: http://localhost:3000');
+  console.log('🔧 后端API: http://localhost:5000');
   console.log('📖 使用 Ctrl+C 停止服务器\n');
 }
 

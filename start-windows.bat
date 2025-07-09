@@ -40,12 +40,12 @@ if not exist node_modules (
 )
 
 echo 📱 启动服务器...
-echo 🌐 前端地址: http://localhost:3100
-echo 🔧 后端API: http://localhost:5100
+echo 🌐 前端地址: http://localhost:3000
+echo 🔧 后端API: http://localhost:5000
 echo 📖 使用 Ctrl+C 停止服务器
 echo.
 
 REM 设置环境变量并启动应用
-set PORT=5100
+set PORT=5000
 set NODE_ENV=development
 npm run dev

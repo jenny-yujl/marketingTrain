@@ -1,5 +1,5 @@
 @echo off
-echo 🎨 启动前端开发服务器 (端口: 3100)...
+echo 🎨 启动前端开发服务器 (端口: 3000)...
 echo.
 
 REM 检查Node.js是否安装
@@ -24,9 +24,9 @@ if not exist node_modules (
 )
 
 echo 🎨 启动前端服务器...
-echo 🌐 前端地址: http://localhost:3100
+echo 🌐 前端地址: http://localhost:3000
 echo 📖 使用 Ctrl+C 停止服务器
 echo.
 
 REM 使用本地配置启动前端
-npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3100
+npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3000

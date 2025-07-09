@@ -1,5 +1,5 @@
 @echo off
-echo 🔧 启动后端服务器 (端口: 5100)...
+echo 🔧 启动后端服务器 (端口: 5000)...
 echo.
 
 REM 检查Node.js是否安装
@@ -24,11 +24,11 @@ if not exist node_modules (
 )
 
 echo 🔧 启动后端服务器...
-echo 🔧 后端API: http://localhost:5100
+echo 🔧 后端API: http://localhost:5000
 echo 📖 使用 Ctrl+C 停止服务器
 echo.
 
 REM 设置环境变量并启动后端
-set PORT=5100
+set PORT=5000
 set NODE_ENV=development
 npx tsx server/index.ts

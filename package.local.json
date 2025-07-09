@@ -6,8 +6,8 @@
     "install-deps": "npm install",
     "dev": "node start-local.js",
     "dev:windows": "node start-windows.js",
-    "dev:frontend": "vite --config vite.local.config.ts --host 0.0.0.0 --port 3100",
-    "dev:backend": "cross-env PORT=5100 NODE_ENV=development tsx server/index.ts",
+    "dev:frontend": "vite --config vite.local.config.ts --host 0.0.0.0 --port 3000",
+    "dev:backend": "cross-env PORT=5000 NODE_ENV=development tsx server/index.ts",
     "build": "vite build --config vite.local.config.ts",
     "start": "node server-production.js",
     "local": "node start-local.js"
