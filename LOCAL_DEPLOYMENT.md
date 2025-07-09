@@ -6,7 +6,7 @@
 - npm 或 yarn
 - Git
 
-## 本地部署步骤
+## 快速开始
 
 ### 1. 下载项目代码
 
@@ -16,6 +16,44 @@
 
 ```bash
 npm install
+```
+
+### 3. 启动开发服务器
+
+```bash
+# 使用预配置的启动脚本（推荐）
+node start-local.js
+
+# 或者手动启动后端
+npx tsx server/local.ts
+
+# 在另一个终端启动前端
+npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3000
+```
+
+这会启动：
+- 后端服务器：http://localhost:5000
+- 前端开发服务器：http://localhost:3000
+
+## 常见问题及解决方案
+
+### ✅ 问题已修复：ERR_INVALID_ARG_TYPE 错误
+
+**错误描述**：`TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined`
+
+**根本原因**：
+1. ES模块中 `__dirname` 不可用
+2. 路径解析失败导致 `paths[0]` 为 undefined
+
+**已实施的解决方案**：
+- ✅ 创建专用的 `server/local.ts` 文件
+- ✅ 修复 `vite.local.config.ts` 中的路径解析问题
+- ✅ 添加正确的 `__dirname` 替代方案
+
+**修复代码**：
+```typescript
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 ```
 
 ### 3. 修改配置文件

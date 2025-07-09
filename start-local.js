@@ -6,7 +6,7 @@ const path = require('path');
 console.log('🚀 启动巨量千川直播推广教学系统...\n');
 
 // 启动后端服务器
-const backend = spawn('npx', ['tsx', 'server/index.ts'], {
+const backend = spawn('npx', ['tsx', 'server/local.ts'], {
   stdio: 'inherit',
   env: { ...process.env, NODE_ENV: 'development', PORT: '5000' }
 });
@@ -15,7 +15,7 @@ const backend = spawn('npx', ['tsx', 'server/index.ts'], {
 setTimeout(() => {
   console.log('🎨 启动前端开发服务器...\n');
   
-  const frontend = spawn('npx', ['vite', '--host', '0.0.0.0', '--port', '3000'], {
+  const frontend = spawn('npx', ['vite', '--config', 'vite.local.config.ts', '--host', '0.0.0.0', '--port', '3000'], {
     stdio: 'inherit',
     cwd: process.cwd()
   });
