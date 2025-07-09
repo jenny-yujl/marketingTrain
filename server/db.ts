@@ -15,28 +15,35 @@ if (mysqlUrl && mysqlUrl.includes('mysql://') && !mysqlUrl.match(/mysql:\/\/[^:]
 
 let db: any = null;
 
-if (mysqlUrl) {
-  console.log("正在连接MySQL数据库...");
-  try {
-    // 验证URL格式
-    new URL(mysqlUrl);
-    // 创建异步连接
-    mysql.createConnection(mysqlUrl).then(connection => {
+// 初始化数据库连接的异步函数
+async function initializeDatabase() {
+  if (mysqlUrl) {
+    console.log("正在连接MySQL数据库...");
+    try {
+      // 验证URL格式
+      new URL(mysqlUrl);
+      // 创建连接
+      const connection = await mysql.createConnection(mysqlUrl);
       db = drizzle(connection, { schema, mode: "default" });
       console.log("✅ MySQL数据库连接成功！");
-    }).catch(error => {
-      console.warn("❌ MySQL连接失败，使用内存存储:", error.message);
+      return db;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn("❌ MySQL连接失败，使用内存存储:", errorMessage);
+      if (errorMessage.includes('Invalid URL')) {
+        console.log("请使用正确格式：mysql://用户名:密码@主机地址:端口/数据库名");
+        console.log("示例：mysql://root:password@localhost:3306/mydatabase");
+      }
       db = null;
-    });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.warn("❌ MySQL连接字符串格式错误:", errorMessage);
-    console.log("请使用正确格式：mysql://用户名:密码@主机地址:端口/数据库名");
-    console.log("示例：mysql://root:password@localhost:3306/mydatabase");
-    db = null;
+      return null;
+    }
+  } else {
+    console.log("未设置MYSQL_DATABASE_URL，使用内存存储");
+    return null;
   }
-} else {
-  console.log("未设置MYSQL_DATABASE_URL，使用内存存储");
 }
+
+// 立即执行初始化
+initializeDatabase();
 
 export { db };
