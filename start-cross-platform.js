@@ -104,11 +104,11 @@ async function checkDependencies() {
 
 // 启动服务器
 function startServers() {
-  console.log('🔧 启动后端服务器 (端口: 5100)...\n');
+  console.log('🔧 启动后端服务器 (端口: 5000)...\n');
   
   // 后端启动命令 - 直接使用npx避免npm脚本问题
   const backendCmd = getExecutablePath('npx');
-  const backendArgs = ['cross-env', 'PORT=5100', 'NODE_ENV=development', 'tsx', 'server/index.ts'];
+  const backendArgs = ['cross-env', 'PORT=5000', 'NODE_ENV=development', 'tsx', 'server/index.ts'];
   
   const backend = spawn(backendCmd, backendArgs, {
     stdio: 'inherit',
@@ -121,11 +121,11 @@ function startServers() {
 
   // 等待后端启动
   setTimeout(() => {
-    console.log('🎨 启动前端服务器 (端口: 3100)...\n');
+    console.log('🎨 启动前端服务器 (端口: 3000)...\n');
     
     // 前端启动命令 - 直接使用npx避免npm脚本问题
     const frontendCmd = getExecutablePath('npx');
-    const frontendArgs = ['vite', '--config', 'vite.local.config.ts', '--host', '0.0.0.0', '--port', '3100'];
+    const frontendArgs = ['vite', '--config', 'vite.local.config.ts', '--host', '0.0.0.0', '--port', '3000'];
     
     const frontend = spawn(frontendCmd, frontendArgs, {
       stdio: 'inherit',
@@ -175,8 +175,8 @@ function startServers() {
   console.log('==========================================');
   console.log('    巨量千川直播推广教学系统');
   console.log('==========================================');
-  console.log('🌐 前端地址: http://localhost:3100');
-  console.log('🔧 后端API: http://localhost:5100');
+  console.log('🌐 前端地址: http://localhost:3000');
+  console.log('🔧 后端API: http://localhost:5000');
   console.log(`📱 操作系统: ${os.platform()} ${os.arch()}`);
   console.log('==========================================');
   console.log('📖 使用 Ctrl+C 停止所有服务器\n');

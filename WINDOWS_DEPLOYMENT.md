@@ -6,15 +6,15 @@
 
 - **Node.js**: 版本 16 或更高 ([下载链接](https://nodejs.org/))
 - **操作系统**: Windows 10/11
-- **端口要求**: 确保端口 3100 和 5100 未被占用
+- **端口要求**: 确保端口 3000 和 5000 未被占用
 
 ### 快速启动
 
 #### 方式1: 一键启动（推荐）
 双击 `start-full-windows.bat` 文件，选择启动选项：
 - [1] 启动完整系统 (前端 + 后端)
-- [2] 仅启动前端 (端口: 3100)
-- [3] 仅启动后端 (端口: 5100)
+- [2] 仅启动前端 (端口: 3000)
+- [3] 仅启动后端 (端口: 5000)
 
 #### 方式2: 分别启动服务
 ```bash
@@ -33,10 +33,10 @@ start-backend-windows.bat
 # 安装依赖
 npm install
 
-# 启动前端 (端口: 3100)
+# 启动前端 (端口: 3000)
 npm run dev:frontend
 
-# 启动后端 (端口: 5100)
+# 启动后端 (端口: 5000)
 npm run dev:backend
 
 # 启动Windows版本
@@ -45,18 +45,18 @@ npm run dev:windows
 
 ### 访问地址
 
-- **前端应用**: http://localhost:3100
-- **后端API**: http://localhost:5100
-- **API文档**: http://localhost:5100/api
+- **前端应用**: http://localhost:3000
+- **后端API**: http://localhost:5000
+- **API文档**: http://localhost:5000/api
 
 ### 端口配置
 
-#### 前端端口: 3100
+#### 前端端口: 3000
 - Vite开发服务器运行在此端口
 - 支持热重载和快速刷新
 - 自动代理API请求到后端
 
-#### 后端端口: 5100
+#### 后端端口: 5000
 - Express服务器运行在此端口
 - 提供RESTful API接口
 - 处理数据库操作
@@ -92,7 +92,7 @@ psql -U username -d database_name -f database_schema.sql
 ```
 DATABASE_URL=postgresql://username:password@localhost:5432/database_name
 NODE_ENV=development
-PORT=5100
+PORT=5000
 ```
 
 ### 功能特性
@@ -117,8 +117,8 @@ PORT=5100
 **1. 端口被占用**
 ```bash
 # 查看端口占用
-netstat -ano | findstr :3100
-netstat -ano | findstr :5100
+netstat -ano | findstr :3000
+netstat -ano | findstr :5000
 
 # 终止进程
 taskkill /PID <进程ID> /F

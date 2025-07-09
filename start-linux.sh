@@ -43,29 +43,29 @@ fi
 echo "=========================================="
 echo "    巨量千川直播推广教学系统"
 echo "=========================================="
-echo "🌐 前端地址: http://localhost:3100"
-echo "🔧 后端API: http://localhost:5100"
+echo "🌐 前端地址: http://localhost:3000"
+echo "🔧 后端API: http://localhost:5000"
 echo "📚 数据库: PostgreSQL (需要单独配置)"
 echo "=========================================="
 echo ""
 
 # 启动后端服务器
-echo "🔧 启动后端服务器 (端口: 5100)..."
-PORT=5100 NODE_ENV=development npx tsx server/index.ts &
+echo "🔧 启动后端服务器 (端口: 5000)..."
+PORT=5000 NODE_ENV=development npx tsx server/index.ts &
 BACKEND_PID=$!
 
 # 等待后端启动
 sleep 3
 
 # 启动前端服务器
-echo "🎨 启动前端服务器 (端口: 3100)..."
-npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3100 &
+echo "🎨 启动前端服务器 (端口: 3000)..."
+npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3000 &
 FRONTEND_PID=$!
 
 echo ""
 echo "✅ 服务器启动完成!"
 echo ""
-echo "🌐 请访问: http://localhost:3100"
+echo "🌐 请访问: http://localhost:3000"
 echo "📖 使用 Ctrl+C 停止所有服务器"
 echo ""
 

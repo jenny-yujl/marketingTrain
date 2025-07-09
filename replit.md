@@ -8,7 +8,7 @@ This is a full-stack web application for managing advertising campaigns, specifi
 
 Preferred communication style: Simple, everyday language.
 User requested cross-platform deployment capability for both Windows and Linux environments.
-Port configuration: Frontend 3100, Backend 5100 to avoid conflicts with other services.
+Port configuration: Frontend 3000, Backend 5000 (standard development ports).
 
 ## System Architecture
 
@@ -120,7 +120,7 @@ Port configuration: Frontend 3100, Backend 5100 to avoid conflicts with other se
 - **Linux Support**: Shell scripts with Unix-style process management  
 - **macOS Support**: Uses Linux scripts for compatibility
 - **Auto-Detection**: JavaScript-based launcher that detects OS automatically
-- **Port Configuration**: Frontend 3100, Backend 5100 for conflict avoidance
+- **Port Configuration**: Frontend 3000, Backend 5000 (standard development ports)
 - **Dependencies**: cross-env package for environment variable handling across platforms
 
 ### Deployment Files

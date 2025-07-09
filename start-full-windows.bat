@@ -44,16 +44,16 @@ if not exist node_modules (
 echo ==========================================
 echo    巨量千川直播推广教学系统
 echo ==========================================
-echo 🌐 前端地址: http://localhost:3100
-echo 🔧 后端API: http://localhost:5100
+echo 🌐 前端地址: http://localhost:3000
+echo 🔧 后端API: http://localhost:5000
 echo 📚 数据库: PostgreSQL (需要单独配置)
 echo ==========================================
 echo.
 
 echo 📝 启动选项:
 echo [1] 启动完整系统 (前端 + 后端)
-echo [2] 仅启动前端 (端口: 3100)
-echo [3] 仅启动后端 (端口: 5100)
+echo [2] 仅启动前端 (端口: 3000)
+echo [3] 仅启动后端 (端口: 5000)
 echo [4] 退出
 echo.
 
@@ -72,17 +72,17 @@ echo 📖 使用 Ctrl+C 停止所有服务器
 echo.
 
 REM 在新窗口启动后端
-start "后端服务器 - 端口5100" cmd /k "set PORT=5100 && set NODE_ENV=development && npx tsx server/index.ts"
+start "后端服务器 - 端口5000" cmd /k "set PORT=5000 && set NODE_ENV=development && npx tsx server/index.ts"
 
 REM 等待2秒让后端启动
 timeout /t 2 /nobreak >nul
 
 REM 在新窗口启动前端
-start "前端服务器 - 端口3100" cmd /k "npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3100"
+start "前端服务器 - 端口3000" cmd /k "npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3000"
 
 echo ✅ 服务器启动完成!
 echo.
-echo 🌐 请访问: http://localhost:3100
+echo 🌐 请访问: http://localhost:3000
 echo 📱 系统将在新窗口中运行
 echo.
 pause
@@ -91,17 +91,17 @@ goto exit
 :start_frontend
 echo.
 echo 🎨 启动前端服务器...
-echo 🌐 访问地址: http://localhost:3100
+echo 🌐 访问地址: http://localhost:3000
 echo.
-npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3100
+npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3000
 goto exit
 
 :start_backend
 echo.
 echo 🔧 启动后端服务器...
-echo 🔧 API地址: http://localhost:5100
+echo 🔧 API地址: http://localhost:5000
 echo.
-set PORT=5100
+set PORT=5000
 set NODE_ENV=development
 npx tsx server/index.ts
 goto exit

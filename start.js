@@ -20,8 +20,8 @@ if (!fs.existsSync('node_modules')) {
 console.log('==========================================');
 console.log('    巨量千川直播推广教学系统');
 console.log('==========================================');
-console.log('🌐 前端地址: http://localhost:3100');
-console.log('🔧 后端API: http://localhost:5100');
+console.log('🌐 前端地址: http://localhost:3000');
+console.log('🔧 后端API: http://localhost:5000');
 console.log('==========================================');
 console.log('📖 使用 Ctrl+C 停止所有服务器\n');
 
@@ -29,15 +29,15 @@ console.log('📖 使用 Ctrl+C 停止所有服务器\n');
 const env = {
   ...process.env,
   NODE_ENV: 'development',
-  PORT: '5100',
+  PORT: '5000',
   FORCE_COLOR: '1'
 };
 
 // 启动后端
 console.log('🔧 启动后端服务器...');
 const backendArgs = isWindows 
-  ? ['cmd', ['/c', 'npx cross-env PORT=5100 NODE_ENV=development tsx server/index.ts']]
-  : ['npx', ['cross-env', 'PORT=5100', 'NODE_ENV=development', 'tsx', 'server/index.ts']];
+  ? ['cmd', ['/c', 'npx cross-env PORT=5000 NODE_ENV=development tsx server/index.ts']]
+  : ['npx', ['cross-env', 'PORT=5000', 'NODE_ENV=development', 'tsx', 'server/index.ts']];
 
 const backend = spawn(backendArgs[0], backendArgs[1], {
   stdio: 'inherit',
@@ -50,8 +50,8 @@ setTimeout(() => {
   console.log('🎨 启动前端服务器...');
   
   const frontendArgs = isWindows
-    ? ['cmd', ['/c', 'npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3100']]
-    : ['npx', ['vite', '--config', 'vite.local.config.ts', '--host', '0.0.0.0', '--port', '3100']];
+    ? ['cmd', ['/c', 'npx vite --config vite.local.config.ts --host 0.0.0.0 --port 3000']]
+    : ['npx', ['vite', '--config', 'vite.local.config.ts', '--host', '0.0.0.0', '--port', '3000']];
 
   const frontend = spawn(frontendArgs[0], frontendArgs[1], {
     stdio: 'inherit',

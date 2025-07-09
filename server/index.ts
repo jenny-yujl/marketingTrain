@@ -56,7 +56,7 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Use environment PORT or default to 5000 for Replit, 5100 for local
+  // Use environment PORT or default to 5000
   const port = parseInt(process.env.PORT || "5000");
   server.listen({
     port,

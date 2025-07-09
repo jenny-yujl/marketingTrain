@@ -14,7 +14,7 @@
 - **npm**: 版本 7.0 或更高
 - **内存**: 最少 2GB RAM
 - **存储**: 最少 1GB 可用空间
-- **端口**: 3100 (前端) 和 5100 (后端) 需要空闲
+- **端口**: 3000 (前端) 和 5000 (后端) 需要空闲
 
 ---
 
@@ -133,8 +133,8 @@ cd qianchuan-teaching-system
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| 前端 | 3100 | Vite开发服务器 |
-| 后端 | 5100 | Express API服务器 |
+| 前端 | 3000 | Vite开发服务器 |
+| 后端 | 5000 | Express API服务器 |
 
 ### 环境变量
 
@@ -145,10 +145,10 @@ DATABASE_URL=postgresql://username:password@localhost:5432/qianchuan_db
 
 # 服务器配置
 NODE_ENV=development
-PORT=5100
+PORT=5000
 
 # 前端配置
-VITE_API_BASE_URL=http://localhost:5100
+VITE_API_BASE_URL=http://localhost:5000
 ```
 
 ### 配置文件对应关系
@@ -208,12 +208,12 @@ npm run db:push
 #### 1. 端口占用
 ```bash
 # Windows - 查看端口占用
-netstat -ano | findstr :3100
-netstat -ano | findstr :5100
+netstat -ano | findstr :3000
+netstat -ano | findstr :5000
 
 # Linux/macOS - 查看端口占用
-lsof -i :3100
-lsof -i :5100
+lsof -i :3000
+lsof -i :5000
 
 # 终止进程
 # Windows
@@ -298,10 +298,10 @@ npm install
 node start-cross-platform.js
 
 # 仅启动前端
-npx vite --config vite.local.config.ts --port 3100
+npx vite --config vite.local.config.ts --port 3000
 
 # 仅启动后端
-npx cross-env PORT=5100 NODE_ENV=development tsx server/index.ts
+npx cross-env PORT=5000 NODE_ENV=development tsx server/index.ts
 
 # 构建生产版本
 npm run build
@@ -360,7 +360,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 COPY . .
 RUN npm run build
-EXPOSE 5100
+EXPOSE 5000
 CMD ["npm", "start"]
 ```
 
