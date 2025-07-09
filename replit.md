@@ -108,9 +108,10 @@ User requested local server deployment capability.
 - **Memory Storage**: Fallback storage for development without database
 
 ### Database Schema
-- **Campaigns Table**: Stores all campaign configuration data
+- **Campaigns Table**: Stores all campaign configuration data with JSONB arrays for complex data
 - **Products Table**: Product catalog with pricing and descriptions
-- **Schema Management**: Drizzle migrations for version control
-- **Type Safety**: Generated TypeScript types from database schema
+- **PostgreSQL Integration**: Neon Database with persistent storage replacing memory storage
+- **Schema Export**: Complete SQL schema available in `database_schema.sql`
+- **Type Safety**: Generated TypeScript types from database schema via Drizzle ORM
 
 The application follows a modern full-stack architecture with emphasis on type safety, developer experience, and scalable design patterns. The system is designed to be easily extensible for additional features like user authentication, advanced analytics, and integration with external advertising platforms.
