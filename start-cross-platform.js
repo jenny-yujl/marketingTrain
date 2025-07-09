@@ -106,15 +106,15 @@ async function checkDependencies() {
 function startServers() {
   console.log('🔧 启动后端服务器 (端口: 5100)...\n');
   
-  // 后端启动命令
-  const backendCmd = isWindows ? 'npm.cmd' : 'npm';
-  const backend = spawn(backendCmd, ['run', 'dev:backend:cross'], {
+  // 后端启动命令 - 直接使用npx避免npm脚本问题
+  const backendCmd = getExecutablePath('npx');
+  const backendArgs = ['cross-env', 'PORT=5100', 'NODE_ENV=development', 'tsx', 'server/index.ts'];
+  
+  const backend = spawn(backendCmd, backendArgs, {
     stdio: 'inherit',
     shell: isWindows,
     env: { 
       ...process.env, 
-      NODE_ENV: 'development', 
-      PORT: '5100',
       FORCE_COLOR: '1'
     }
   });
@@ -123,9 +123,11 @@ function startServers() {
   setTimeout(() => {
     console.log('🎨 启动前端服务器 (端口: 3100)...\n');
     
-    // 前端启动命令
-    const frontendCmd = isWindows ? 'npm.cmd' : 'npm';
-    const frontend = spawn(frontendCmd, ['run', 'dev:frontend:cross'], {
+    // 前端启动命令 - 直接使用npx避免npm脚本问题
+    const frontendCmd = getExecutablePath('npx');
+    const frontendArgs = ['vite', '--config', 'vite.local.config.ts', '--host', '0.0.0.0', '--port', '3100'];
+    
+    const frontend = spawn(frontendCmd, frontendArgs, {
       stdio: 'inherit',
       shell: isWindows,
       env: { 

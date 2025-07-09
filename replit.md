@@ -7,7 +7,8 @@ This is a full-stack web application for managing advertising campaigns, specifi
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
-User requested local server deployment capability.
+User requested cross-platform deployment capability for both Windows and Linux environments.
+Port configuration: Frontend 3100, Backend 5100 to avoid conflicts with other services.
 
 ## System Architecture
 
@@ -113,5 +114,21 @@ User requested local server deployment capability.
 - **PostgreSQL Integration**: Neon Database with persistent storage replacing memory storage
 - **Schema Export**: Complete SQL schema available in `database_schema.sql`
 - **Type Safety**: Generated TypeScript types from database schema via Drizzle ORM
+
+### Cross-Platform Deployment
+- **Windows Support**: Native batch scripts with automatic dependency checking
+- **Linux Support**: Shell scripts with Unix-style process management  
+- **macOS Support**: Uses Linux scripts for compatibility
+- **Auto-Detection**: JavaScript-based launcher that detects OS automatically
+- **Port Configuration**: Frontend 3100, Backend 5100 for conflict avoidance
+- **Dependencies**: cross-env package for environment variable handling across platforms
+
+### Deployment Files
+- `start-cross-platform.js`: Universal launcher with OS detection
+- `start-full-windows.bat`: Interactive Windows launcher with menu options
+- `start-linux.sh`: Linux/macOS shell script with process management
+- `start.js`: Simplified cross-platform launcher
+- `CROSS_PLATFORM_DEPLOYMENT.md`: Complete deployment documentation
+- `WINDOWS_DEPLOYMENT.md`: Windows-specific installation guide
 
 The application follows a modern full-stack architecture with emphasis on type safety, developer experience, and scalable design patterns. The system is designed to be easily extensible for additional features like user authentication, advanced analytics, and integration with external advertising platforms.
