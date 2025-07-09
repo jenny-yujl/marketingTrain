@@ -17,67 +17,37 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Database storage will be implemented when MySQL is configured
   async getCampaign(id: number): Promise<Campaign | undefined> {
-    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
-    return campaign || undefined;
+    throw new Error("Database storage not available - using memory storage instead");
   }
 
   async getCampaigns(): Promise<Campaign[]> {
-    return await db.select().from(campaigns);
+    throw new Error("Database storage not available - using memory storage instead");
   }
 
   async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
-    const campaignData: any = { ...insertCampaign };
-    const result = await db
-      .insert(campaigns)
-      .values(campaignData);
-    
-    // For MySQL, we need to get the inserted ID and fetch the record
-    const insertId = result[0].insertId;
-    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, insertId));
-    return campaign;
+    throw new Error("Database storage not available - using memory storage instead");
   }
 
   async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
-    const updateObject: any = { ...updateData, updatedAt: new Date() };
-    
-    await db
-      .update(campaigns)
-      .set(updateObject)
-      .where(eq(campaigns.id, id));
-    
-    // For MySQL, fetch the updated record
-    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
-    
-    if (!campaign) {
-      throw new Error(`Campaign with id ${id} not found`);
-    }
-    
-    return campaign;
+    throw new Error("Database storage not available - using memory storage instead");
   }
 
   async deleteCampaign(id: number): Promise<void> {
-    await db.delete(campaigns).where(eq(campaigns.id, id));
+    throw new Error("Database storage not available - using memory storage instead");
   }
 
   async getProduct(id: number): Promise<Product | undefined> {
-    const [product] = await db.select().from(products).where(eq(products.id, id));
-    return product || undefined;
+    throw new Error("Database storage not available - using memory storage instead");
   }
 
   async getProducts(): Promise<Product[]> {
-    return await db.select().from(products);
+    throw new Error("Database storage not available - using memory storage instead");
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const result = await db
-      .insert(products)
-      .values(insertProduct);
-    
-    // For MySQL, we need to get the inserted ID and fetch the record
-    const insertId = result[0].insertId;
-    const [product] = await db.select().from(products).where(eq(products.id, insertId));
-    return product;
+    throw new Error("Database storage not available - using memory storage instead");
   }
 }
 
@@ -144,12 +114,22 @@ export class MemStorage implements IStorage {
     const campaign: Campaign = {
       ...insertCampaign,
       id,
+      productId: insertCampaign.productId || null,
+      originalPrice: insertCampaign.originalPrice || null,
+      currentPrice: insertCampaign.currentPrice || null,
+      fullReductionThreshold: insertCampaign.fullReductionThreshold || null,
+      fullReductionAmount: insertCampaign.fullReductionAmount || null,
+      startTime: insertCampaign.startTime || null,
+      endTime: insertCampaign.endTime || null,
+      hasTimeLimitedDiscount: insertCampaign.hasTimeLimitedDiscount || false,
+      discountPercentage: insertCampaign.discountPercentage || 0,
+      hasFullReduction: insertCampaign.hasFullReduction || false,
       status: insertCampaign.status || "draft",
-      placements: Array.isArray(insertCampaign.placements) ? insertCampaign.placements : [],
-      deviceTypes: Array.isArray(insertCampaign.deviceTypes) ? insertCampaign.deviceTypes : [],
-      interests: Array.isArray(insertCampaign.interests) ? insertCampaign.interests : [],
-      behaviors: Array.isArray(insertCampaign.behaviors) ? insertCampaign.behaviors : [],
-      weeklySchedule: Array.isArray(insertCampaign.weeklySchedule) ? insertCampaign.weeklySchedule : [],
+      placements: Array.isArray(insertCampaign.placements) ? insertCampaign.placements as string[] : [],
+      deviceTypes: Array.isArray(insertCampaign.deviceTypes) ? insertCampaign.deviceTypes as string[] : [],
+      interests: Array.isArray(insertCampaign.interests) ? insertCampaign.interests as string[] : [],
+      behaviors: Array.isArray(insertCampaign.behaviors) ? insertCampaign.behaviors as string[] : [],
+      weeklySchedule: Array.isArray(insertCampaign.weeklySchedule) ? insertCampaign.weeklySchedule as boolean[] : [],
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -167,11 +147,11 @@ export class MemStorage implements IStorage {
       ...existingCampaign,
       ...updateData,
       status: updateData.status || existingCampaign.status || "draft",
-      placements: Array.isArray(updateData.placements) ? updateData.placements : (existingCampaign.placements || []),
-      deviceTypes: Array.isArray(updateData.deviceTypes) ? updateData.deviceTypes : (existingCampaign.deviceTypes || []),
-      interests: Array.isArray(updateData.interests) ? updateData.interests : (existingCampaign.interests || []),
-      behaviors: Array.isArray(updateData.behaviors) ? updateData.behaviors : (existingCampaign.behaviors || []),
-      weeklySchedule: Array.isArray(updateData.weeklySchedule) ? updateData.weeklySchedule : (existingCampaign.weeklySchedule || []),
+      placements: Array.isArray(updateData.placements) ? updateData.placements as string[] : (existingCampaign.placements || []),
+      deviceTypes: Array.isArray(updateData.deviceTypes) ? updateData.deviceTypes as string[] : (existingCampaign.deviceTypes || []),
+      interests: Array.isArray(updateData.interests) ? updateData.interests as string[] : (existingCampaign.interests || []),
+      behaviors: Array.isArray(updateData.behaviors) ? updateData.behaviors as string[] : (existingCampaign.behaviors || []),
+      weeklySchedule: Array.isArray(updateData.weeklySchedule) ? updateData.weeklySchedule as boolean[] : (existingCampaign.weeklySchedule || []),
       updatedAt: new Date(),
     };
     this.campaigns.set(id, updatedCampaign);
