@@ -2,14 +2,14 @@
 -- 巨量千川直播推广教学系统 MySQL 数据库结构
 -- 生成时间: 2025-01-09
 -- 版本: 1.0
--- 要求MySQL版本: 5.0+ (兼容更多版本)
+-- 要求MySQL版本: 5.7.5+ (使用现代JSON和BOOLEAN特性)
 -- ================================================
 
 -- 检查MySQL版本兼容性
 SELECT 
     CASE 
-        WHEN VERSION() >= '5.0' THEN '✅ MySQL版本兼容'
-        ELSE '❌ 需要MySQL 5.0或更高版本'
+        WHEN VERSION() >= '5.7.5' THEN '✅ MySQL版本兼容 - 支持JSON和BOOLEAN'
+        ELSE '❌ 需要MySQL 5.7.5或更高版本才能使用JSON字段'
     END as version_check,
     VERSION() as current_version;
 
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `campaigns` (
     `optimization_target` TEXT NOT NULL COMMENT '优化目标',
     `priority` TEXT NOT NULL COMMENT '优先级',
     `promotion_scenario` TEXT NOT NULL COMMENT '推广场景',
-    `placements` TEXT NOT NULL DEFAULT '[]' COMMENT '投放位置数组(JSON格式)',
-    `device_types` TEXT NOT NULL DEFAULT '[]' COMMENT '设备类型数组(JSON格式)',
+    `placements` JSON NOT NULL DEFAULT (JSON_ARRAY()) COMMENT '投放位置数组',
+    `device_types` JSON NOT NULL DEFAULT (JSON_ARRAY()) COMMENT '设备类型数组',
     `product_id` INT NULL COMMENT '关联产品ID',
     `original_price` DECIMAL(10, 2) NULL COMMENT '产品原价',
     `current_price` DECIMAL(10, 2) NULL COMMENT '产品现价',
