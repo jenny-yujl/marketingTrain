@@ -2,14 +2,14 @@
 -- 巨量千川直播推广教学系统 MySQL 数据库结构
 -- 生成时间: 2025-01-09
 -- 版本: 1.0
--- 要求MySQL版本: 5.7.5+ (使用现代JSON和BOOLEAN特性)
+-- 要求MySQL版本: 5.7.5+ (使用TEXT和TINYINT保证最大兼容性)
 -- ================================================
 
 -- 检查MySQL版本兼容性
 SELECT 
     CASE 
-        WHEN VERSION() >= '5.7.5' THEN '✅ MySQL版本兼容 - 支持JSON和BOOLEAN'
-        ELSE '❌ 需要MySQL 5.7.5或更高版本才能使用JSON字段'
+        WHEN VERSION() >= '5.7.5' THEN '✅ MySQL版本兼容 - 使用TEXT和TINYINT字段'
+        ELSE '❌ 需要MySQL 5.7.5或更高版本'
     END as version_check,
     VERSION() as current_version;
 
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `campaigns` (
     `optimization_target` TEXT NOT NULL COMMENT '优化目标',
     `priority` TEXT NOT NULL COMMENT '优先级',
     `promotion_scenario` TEXT NOT NULL COMMENT '推广场景',
-    `placements` JSON NOT NULL DEFAULT (JSON_ARRAY()) COMMENT '投放位置数组',
-    `device_types` JSON NOT NULL DEFAULT (JSON_ARRAY()) COMMENT '设备类型数组',
+    `placements` TEXT NOT NULL DEFAULT '[]' COMMENT '投放位置数组(JSON格式字符串)',
+    `device_types` TEXT NOT NULL DEFAULT '[]' COMMENT '设备类型数组(JSON格式字符串)',
     `product_id` INT NULL COMMENT '关联产品ID',
     `original_price` DECIMAL(10, 2) NULL COMMENT '产品原价',
     `current_price` DECIMAL(10, 2) NULL COMMENT '产品现价',
@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS `campaigns` (
     `age_range` TEXT NOT NULL COMMENT '年龄范围',
     `gender` TEXT NOT NULL COMMENT '性别',
     `location` TEXT NOT NULL COMMENT '地理位置',
-    `interests` TEXT NOT NULL DEFAULT '[]' COMMENT '兴趣标签数组(JSON格式)',
-    `behaviors` TEXT NOT NULL DEFAULT '[]' COMMENT '行为标签数组(JSON格式)',
+    `interests` TEXT NOT NULL DEFAULT '[]' COMMENT '兴趣标签数组(JSON格式字符串)',
+    `behaviors` TEXT NOT NULL DEFAULT '[]' COMMENT '行为标签数组(JSON格式字符串)',
     `campaign_type` TEXT NOT NULL COMMENT '活动类型',
     `start_time` TIMESTAMP NULL COMMENT '开始时间',
     `end_time` TIMESTAMP NULL COMMENT '结束时间',
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `campaigns` (
     `daily_budget` DECIMAL(10, 2) NOT NULL COMMENT '日预算',
     `bidding_strategy` TEXT NOT NULL COMMENT '出价策略',
     `click_bid` DECIMAL(10, 2) NOT NULL COMMENT '点击出价',
-    `weekly_schedule` TEXT NOT NULL DEFAULT '[]' COMMENT '周时间安排数组(JSON格式)',
+    `weekly_schedule` TEXT NOT NULL DEFAULT '[]' COMMENT '周时间安排数组(JSON格式字符串)',
     `status` TEXT NOT NULL DEFAULT 'draft' COMMENT '活动状态',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -96,8 +96,8 @@ INSERT INTO `products` (`name`, `description`, `image`, `original_price`, `curre
 
 -- 插入示例活动数据
 INSERT INTO `campaigns` (`name`, `marketing_goal`, `optimization_target`, `priority`, `promotion_scenario`, `placements`, `device_types`, `product_id`, `original_price`, `current_price`, `has_time_limited_discount`, `discount_percentage`, `age_range`, `gender`, `location`, `interests`, `behaviors`, `campaign_type`, `total_budget`, `daily_budget`, `bidding_strategy`, `click_bid`, `weekly_schedule`, `status`) VALUES
-('双十一直播设备促销', '商品推广', '转化量', '高', '直播间推广', '["直播间", "信息流"]', '["移动设备", "桌面设备"]', 1, 299.00, 199.00, TRUE, 33, '18-35', '不限', '一线城市', '["直播", "摄影", "科技数码"]', '["电商购物", "视频观看"]', '商品推广', 10000.00, 500.00, '最低成本', 1.50, '[true, true, true, true, true, true, true]', 'active'),
-('直播间引流活动', '直播间引流', '直播间人数', '中', '视频推广', '["短视频", "信息流"]', '["移动设备"]', 2, 599.00, 399.00, TRUE, 33, '20-40', '不限', '全国', '["直播", "娱乐", "购物"]', '["视频观看", "直播互动"]', '直播推广', 5000.00, 200.00, '成本控制', 2.00, '[true, true, true, true, true, false, false]', 'active');
+('双十一直播设备促销', '商品推广', '转化量', '高', '直播间推广', '["直播间", "信息流"]', '["移动设备", "桌面设备"]', 1, 299.00, 199.00, 1, 33, '18-35', '不限', '一线城市', '["直播", "摄影", "科技数码"]', '["电商购物", "视频观看"]', '商品推广', 10000.00, 500.00, '最低成本', 1.50, '[1, 1, 1, 1, 1, 1, 1]', 'active'),
+('直播间引流活动', '直播间引流', '直播间人数', '中', '视频推广', '["短视频", "信息流"]', '["移动设备"]', 2, 599.00, 399.00, 1, 33, '20-40', '不限', '全国', '["直播", "娱乐", "购物"]', '["视频观看", "直播互动"]', '直播推广', 5000.00, 200.00, '成本控制', 2.00, '[1, 1, 1, 1, 1, 0, 0]', 'active');
 
 -- ================================================
 -- 创建视图（可选）
