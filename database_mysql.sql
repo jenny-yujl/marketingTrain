@@ -24,12 +24,12 @@ SELECT
 
 CREATE TABLE IF NOT EXISTS `products` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` TEXT NOT NULL COMMENT '产品名称',
+    `name` VARCHAR(255) NOT NULL COMMENT '产品名称',
     `description` TEXT NOT NULL COMMENT '产品描述',
-    `image` TEXT NOT NULL COMMENT '产品图片URL',
+    `image` VARCHAR(500) NOT NULL COMMENT '产品图片URL',
     `original_price` DECIMAL(10, 2) NOT NULL COMMENT '原价',
     `current_price` DECIMAL(10, 2) NOT NULL COMMENT '现价',
-    `category` TEXT NOT NULL COMMENT '产品分类'
+    `category` VARCHAR(100) NOT NULL COMMENT '产品分类'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='产品信息表';
 
 -- ================================================
@@ -39,13 +39,13 @@ CREATE TABLE IF NOT EXISTS `products` (
 
 CREATE TABLE IF NOT EXISTS `campaigns` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` TEXT NOT NULL COMMENT '活动名称',
-    `marketing_goal` TEXT NOT NULL COMMENT '营销目标',
-    `optimization_target` TEXT NOT NULL COMMENT '优化目标',
-    `priority` TEXT NOT NULL COMMENT '优先级',
-    `promotion_scenario` TEXT NOT NULL COMMENT '推广场景',
-    `placements` TEXT NOT NULL DEFAULT '[]' COMMENT '投放位置数组(JSON格式字符串)',
-    `device_types` TEXT NOT NULL DEFAULT '[]' COMMENT '设备类型数组(JSON格式字符串)',
+    `name` VARCHAR(255) NOT NULL COMMENT '活动名称',
+    `marketing_goal` VARCHAR(100) NOT NULL COMMENT '营销目标',
+    `optimization_target` VARCHAR(100) NOT NULL COMMENT '优化目标',
+    `priority` VARCHAR(50) NOT NULL COMMENT '优先级',
+    `promotion_scenario` VARCHAR(100) NOT NULL COMMENT '推广场景',
+    `placements` TEXT NOT NULL COMMENT '投放位置数组(JSON格式字符串)',
+    `device_types` TEXT NOT NULL COMMENT '设备类型数组(JSON格式字符串)',
     `product_id` INT NULL COMMENT '关联产品ID',
     `original_price` DECIMAL(10, 2) NULL COMMENT '产品原价',
     `current_price` DECIMAL(10, 2) NULL COMMENT '产品现价',
@@ -54,20 +54,20 @@ CREATE TABLE IF NOT EXISTS `campaigns` (
     `has_full_reduction` TINYINT(1) DEFAULT 0 COMMENT '是否有满减(0=否,1=是)',
     `full_reduction_threshold` DECIMAL(10, 2) NULL COMMENT '满减门槛',
     `full_reduction_amount` DECIMAL(10, 2) NULL COMMENT '满减金额',
-    `age_range` TEXT NOT NULL COMMENT '年龄范围',
-    `gender` TEXT NOT NULL COMMENT '性别',
-    `location` TEXT NOT NULL COMMENT '地理位置',
-    `interests` TEXT NOT NULL DEFAULT '[]' COMMENT '兴趣标签数组(JSON格式字符串)',
-    `behaviors` TEXT NOT NULL DEFAULT '[]' COMMENT '行为标签数组(JSON格式字符串)',
-    `campaign_type` TEXT NOT NULL COMMENT '活动类型',
+    `age_range` VARCHAR(50) NOT NULL COMMENT '年龄范围',
+    `gender` VARCHAR(20) NOT NULL COMMENT '性别',
+    `location` VARCHAR(100) NOT NULL COMMENT '地理位置',
+    `interests` TEXT NOT NULL COMMENT '兴趣标签数组(JSON格式字符串)',
+    `behaviors` TEXT NOT NULL COMMENT '行为标签数组(JSON格式字符串)',
+    `campaign_type` VARCHAR(100) NOT NULL COMMENT '活动类型',
     `start_time` TIMESTAMP NULL COMMENT '开始时间',
     `end_time` TIMESTAMP NULL COMMENT '结束时间',
     `total_budget` DECIMAL(10, 2) NOT NULL COMMENT '总预算',
     `daily_budget` DECIMAL(10, 2) NOT NULL COMMENT '日预算',
-    `bidding_strategy` TEXT NOT NULL COMMENT '出价策略',
+    `bidding_strategy` VARCHAR(100) NOT NULL COMMENT '出价策略',
     `click_bid` DECIMAL(10, 2) NOT NULL COMMENT '点击出价',
-    `weekly_schedule` TEXT NOT NULL DEFAULT '[]' COMMENT '周时间安排数组(JSON格式字符串)',
-    `status` TEXT NOT NULL DEFAULT 'draft' COMMENT '活动状态',
+    `weekly_schedule` TEXT NOT NULL COMMENT '周时间安排数组(JSON格式字符串)',
+    `status` VARCHAR(20) NOT NULL DEFAULT 'draft' COMMENT '活动状态',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     

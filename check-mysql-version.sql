@@ -51,7 +51,7 @@ WHERE ENGINE = 'InnoDB';
 -- 6. 测试表结构创建
 CREATE TEMPORARY TABLE test_compatibility (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    test_text TEXT DEFAULT '[]',
+    test_text TEXT NOT NULL,
     test_boolean TINYINT(1) DEFAULT 0,
     test_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
