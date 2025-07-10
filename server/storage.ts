@@ -213,7 +213,3 @@ const checkDatabaseConnection = async () => {
 
 // 暂时使用内存存储，稍后可动态切换
 export const storage = new MemStorage();
-
-// 提示用户设置环境变量
-console.log("📝 当前使用内存存储 - 数据在重启后会丢失");
-console.log("💡 要使用MySQL持久存储，请设置MYSQL_DATABASE_URL环境变量");

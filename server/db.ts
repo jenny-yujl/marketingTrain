@@ -2,15 +2,31 @@ import mysql from 'mysql2/promise';
 import { drizzle } from 'drizzle-orm/mysql2';
 import * as schema from "@shared/schema";
 
+// 调试环境变量
+console.log('🔍 环境变量调试信息:');
+console.log('  MYSQL_DATABASE_URL:', process.env.MYSQL_DATABASE_URL || '未设置');
+console.log('  DATABASE_URL:', process.env.DATABASE_URL || '未设置');
+
 // 检查是否有MySQL连接字符串
 let mysqlUrl = process.env.MYSQL_DATABASE_URL;
 
 // 修复常见的连接字符串格式错误
-if (mysqlUrl && mysqlUrl.includes('mysql://') && !mysqlUrl.match(/mysql:\/\/[^:]+:[^@]*@/)) {
-  console.log("检测到MySQL连接字符串格式错误，正在自动修复...");
-  // 修复格式：mysql://user:pass:host:port/db -> mysql://user:pass@host:port/db
-  mysqlUrl = mysqlUrl.replace(/mysql:\/\/([^:]+):([^:]+):([^:]+):(\d+)\/(.+)/, 'mysql://$1:$2@$3:$4/$5');
-  console.log("修复后的连接字符串格式正确");
+if (mysqlUrl) {
+  console.log('🔧 原始连接字符串:', mysqlUrl);
+  
+  // 格式1: mysql://user:pass:host:port/db -> mysql://user:pass@host:port/db
+  if (mysqlUrl.match(/mysql:\/\/[^:]+:[^:@]+:[^:]+:\d+\//)) {
+    console.log("检测到格式错误 (缺少@符号)，正在修复...");
+    mysqlUrl = mysqlUrl.replace(/mysql:\/\/([^:]+):([^:]+):([^:]+):(\d+)\/(.+)/, 'mysql://$1:$2@$3:$4/$5');
+    console.log("修复后:", mysqlUrl);
+  }
+  
+  // 格式2: mysql://host:port/db -> mysql://root:@host:port/db (无用户名密码)
+  if (mysqlUrl.match(/^mysql:\/\/[^@]*:\d+\//)) {
+    console.log("检测到缺少用户认证信息，添加默认用户...");
+    mysqlUrl = mysqlUrl.replace(/mysql:\/\/([^:]+):(\d+)\/(.+)/, 'mysql://root:@$1:$2/$3');
+    console.log("修复后:", mysqlUrl);
+  }
 }
 
 let db: any = null;
@@ -38,7 +54,8 @@ async function initializeDatabase() {
       return null;
     }
   } else {
-    console.log("未设置MYSQL_DATABASE_URL，使用内存存储");
+    console.log("📝 当前使用内存存储 - 数据在重启后会丢失");
+    console.log("💡 要使用MySQL持久存储，请设置MYSQL_DATABASE_URL环境变量");
     return null;
   }
 }

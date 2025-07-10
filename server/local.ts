@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
+
+// 首先加载环境变量
+dotenv.config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import path from "path";
