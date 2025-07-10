@@ -108,12 +108,17 @@ User requested local server deployment capability.
 - **Memory Storage**: Fallback storage for development without database
 
 ### Database Schema
-- **MySQL Ready**: Database schema converted to MySQL format with JSON columns
-- **Campaigns Table**: Stores all campaign configuration data with JSON arrays for complex data
-- **Products Table**: Product catalog with pricing and descriptions  
-- **Memory Storage**: Currently using in-memory storage for data persistence
-- **MySQL Integration**: MySQL schema and drivers configured, ready for database connection
-- **Type Safety**: Generated TypeScript types from database schema via Drizzle ORM
+- **MySQL 5.7.5+ Compatible**: Schema uses VARCHAR/TEXT/TINYINT instead of JSON/BOOLEAN for maximum compatibility
+- **Campaigns Table**: Stores campaign data with TEXT fields for JSON arrays (placements, deviceTypes, interests, behaviors, weeklySchedule)
+- **Products Table**: Product catalog with VARCHAR fields for names/categories, TEXT for descriptions
+- **Field Type Strategy**: 
+  - Short text fields: VARCHAR with appropriate lengths
+  - Long text/JSON data: TEXT fields without default values
+  - Boolean values: TINYINT(1) with 0/1 values
+- **Data Conversion**: Automatic JSON parsing/stringifying in storage layer
+- **Memory Storage**: Currently using in-memory storage for immediate functionality
+- **MySQL Integration**: Complete MySQL schema and drivers configured with connection string auto-repair
+- **Type Safety**: TypeScript types with Zod validation for data integrity
 
 ## Recent Changes (January 2025)
 - ✓ **Database Migration**: Successfully converted from PostgreSQL to MySQL architecture
@@ -128,5 +133,9 @@ User requested local server deployment capability.
 - ✓ **Path Resolution**: Fixed ES module path resolution issues for local development environment
 - ✓ **ES Module Fix**: Converted start-local.js and package-for-local.js from CommonJS to ES module syntax
 - ✓ **require() Error Fix**: Resolved "require is not defined in ES module scope" error in local deployment scripts
+- ✓ **Environment Variables**: Fixed .env file loading by installing dotenv package and configuring proper loading
+- ✓ **MySQL Schema Compatibility**: Updated schema.ts to use VARCHAR/TEXT/TINYINT instead of JSON/BOOLEAN for MySQL 5.7.5+ compatibility
+- ✓ **TEXT Field Default Values**: Removed illegal default values from TEXT fields in all SQL files
+- ✓ **Data Type Conversion**: Implemented automatic conversion between JSON arrays/objects and TEXT strings in storage layer
 
 The application follows a modern full-stack architecture with emphasis on type safety, developer experience, and scalable design patterns. The system is designed to be easily extensible for additional features like user authentication, advanced analytics, and integration with external advertising platforms.

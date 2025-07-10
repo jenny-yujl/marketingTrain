@@ -16,34 +16,114 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // 将数据库中的TEXT字段转换为应用层格式
+  private transformCampaignFromDB(dbCampaign: any): Campaign {
+    return {
+      ...dbCampaign,
+      placements: this.parseJSONField(dbCampaign.placements, []),
+      deviceTypes: this.parseJSONField(dbCampaign.deviceTypes, []),
+      interests: this.parseJSONField(dbCampaign.interests, []),
+      behaviors: this.parseJSONField(dbCampaign.behaviors, []),
+      weeklySchedule: this.parseJSONField(dbCampaign.weeklySchedule, []),
+      hasTimeLimitedDiscount: Boolean(dbCampaign.hasTimeLimitedDiscount),
+      hasFullReduction: Boolean(dbCampaign.hasFullReduction),
+    };
+  }
+  
+  // 安全解析JSON字段
+  private parseJSONField(value: string | any, defaultValue: any = null): any {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return defaultValue;
+      }
+    }
+    return value || defaultValue;
+  }
   async getCampaign(id: number): Promise<Campaign | undefined> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
-    return campaign || undefined;
+    return campaign ? this.transformCampaignFromDB(campaign) : undefined;
   }
 
   async getCampaigns(): Promise<Campaign[]> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
-    return await db.select().from(campaigns);
+    const dbCampaigns = await db.select().from(campaigns);
+    return dbCampaigns.map(campaign => this.transformCampaignFromDB(campaign));
   }
 
   async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
-    const result = await db.insert(campaigns).values(insertCampaign);
+    
+    // 处理数据格式转换
+    const processedData = {
+      ...insertCampaign,
+      // 确保TEXT字段为字符串格式
+      placements: typeof insertCampaign.placements === 'string' 
+        ? insertCampaign.placements 
+        : JSON.stringify(insertCampaign.placements || []),
+      deviceTypes: typeof insertCampaign.deviceTypes === 'string' 
+        ? insertCampaign.deviceTypes 
+        : JSON.stringify(insertCampaign.deviceTypes || []),
+      interests: typeof insertCampaign.interests === 'string' 
+        ? insertCampaign.interests 
+        : JSON.stringify(insertCampaign.interests || []),
+      behaviors: typeof insertCampaign.behaviors === 'string' 
+        ? insertCampaign.behaviors 
+        : JSON.stringify(insertCampaign.behaviors || []),
+      weeklySchedule: typeof insertCampaign.weeklySchedule === 'string' 
+        ? insertCampaign.weeklySchedule 
+        : JSON.stringify(insertCampaign.weeklySchedule || []),
+    };
+    
+    const result = await db.insert(campaigns).values(processedData);
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, result[0].insertId));
-    return campaign;
+    
+    // 转换返回的数据格式
+    return this.transformCampaignFromDB(campaign);
   }
 
   async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
-    await db.update(campaigns).set({ ...updateData, updatedAt: new Date() }).where(eq(campaigns.id, id));
+    
+    // 处理数据格式转换
+    const processedData: any = { ...updateData, updatedAt: new Date() };
+    
+    if (updateData.placements) {
+      processedData.placements = typeof updateData.placements === 'string' 
+        ? updateData.placements 
+        : JSON.stringify(updateData.placements);
+    }
+    if (updateData.deviceTypes) {
+      processedData.deviceTypes = typeof updateData.deviceTypes === 'string' 
+        ? updateData.deviceTypes 
+        : JSON.stringify(updateData.deviceTypes);
+    }
+    if (updateData.interests) {
+      processedData.interests = typeof updateData.interests === 'string' 
+        ? updateData.interests 
+        : JSON.stringify(updateData.interests);
+    }
+    if (updateData.behaviors) {
+      processedData.behaviors = typeof updateData.behaviors === 'string' 
+        ? updateData.behaviors 
+        : JSON.stringify(updateData.behaviors);
+    }
+    if (updateData.weeklySchedule) {
+      processedData.weeklySchedule = typeof updateData.weeklySchedule === 'string' 
+        ? updateData.weeklySchedule 
+        : JSON.stringify(updateData.weeklySchedule);
+    }
+    
+    await db.update(campaigns).set(processedData).where(eq(campaigns.id, id));
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
     if (!campaign) throw new Error(`Campaign with id ${id} not found`);
-    return campaign;
+    return this.transformCampaignFromDB(campaign);
   }
 
   async deleteCampaign(id: number): Promise<void> {
@@ -88,6 +168,20 @@ export class MemStorage implements IStorage {
     
     // Initialize with sample products
     this.initializeProducts();
+  }
+
+  // 解析数组字段，兼容字符串和数组格式
+  private parseArrayField(value: any, defaultValue: any[]): any[] {
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : defaultValue;
+      } catch {
+        return defaultValue;
+      }
+    }
+    return defaultValue;
   }
 
   private initializeProducts() {
@@ -148,11 +242,11 @@ export class MemStorage implements IStorage {
       discountPercentage: insertCampaign.discountPercentage || 0,
       hasFullReduction: insertCampaign.hasFullReduction || false,
       status: insertCampaign.status || "draft",
-      placements: Array.isArray(insertCampaign.placements) ? insertCampaign.placements as string[] : [],
-      deviceTypes: Array.isArray(insertCampaign.deviceTypes) ? insertCampaign.deviceTypes as string[] : [],
-      interests: Array.isArray(insertCampaign.interests) ? insertCampaign.interests as string[] : [],
-      behaviors: Array.isArray(insertCampaign.behaviors) ? insertCampaign.behaviors as string[] : [],
-      weeklySchedule: Array.isArray(insertCampaign.weeklySchedule) ? insertCampaign.weeklySchedule as boolean[] : [],
+      placements: this.parseArrayField(insertCampaign.placements, []),
+      deviceTypes: this.parseArrayField(insertCampaign.deviceTypes, []),
+      interests: this.parseArrayField(insertCampaign.interests, []),
+      behaviors: this.parseArrayField(insertCampaign.behaviors, []),
+      weeklySchedule: this.parseArrayField(insertCampaign.weeklySchedule, []),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -170,11 +264,11 @@ export class MemStorage implements IStorage {
       ...existingCampaign,
       ...updateData,
       status: updateData.status || existingCampaign.status || "draft",
-      placements: Array.isArray(updateData.placements) ? updateData.placements as string[] : (existingCampaign.placements || []),
-      deviceTypes: Array.isArray(updateData.deviceTypes) ? updateData.deviceTypes as string[] : (existingCampaign.deviceTypes || []),
-      interests: Array.isArray(updateData.interests) ? updateData.interests as string[] : (existingCampaign.interests || []),
-      behaviors: Array.isArray(updateData.behaviors) ? updateData.behaviors as string[] : (existingCampaign.behaviors || []),
-      weeklySchedule: Array.isArray(updateData.weeklySchedule) ? updateData.weeklySchedule as boolean[] : (existingCampaign.weeklySchedule || []),
+      placements: updateData.placements ? this.parseArrayField(updateData.placements, []) : existingCampaign.placements || [],
+      deviceTypes: updateData.deviceTypes ? this.parseArrayField(updateData.deviceTypes, []) : existingCampaign.deviceTypes || [],
+      interests: updateData.interests ? this.parseArrayField(updateData.interests, []) : existingCampaign.interests || [],
+      behaviors: updateData.behaviors ? this.parseArrayField(updateData.behaviors, []) : existingCampaign.behaviors || [],
+      weeklySchedule: updateData.weeklySchedule ? this.parseArrayField(updateData.weeklySchedule, []) : existingCampaign.weeklySchedule || [],
       updatedAt: new Date(),
     };
     this.campaigns.set(id, updatedCampaign);
