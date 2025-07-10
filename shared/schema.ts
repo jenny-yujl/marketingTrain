@@ -75,6 +75,22 @@ export const insertCampaignSchema = createInsertSchema(campaigns).omit({
   hasFullReduction: z.union([z.boolean(), z.number()]).transform(val => 
     typeof val === 'boolean' ? (val ? 1 : 0) : val
   ),
+  // 将数字转换为字符串（decimal字段）
+  originalPrice: z.union([z.string(), z.number(), z.null()]).transform(val => 
+    val === null ? null : String(val)
+  ).optional(),
+  currentPrice: z.union([z.string(), z.number(), z.null()]).transform(val => 
+    val === null ? null : String(val)
+  ).optional(),
+  fullReductionThreshold: z.union([z.string(), z.number(), z.null()]).transform(val => 
+    val === null ? null : String(val)
+  ).optional(),
+  fullReductionAmount: z.union([z.string(), z.number(), z.null()]).transform(val => 
+    val === null ? null : String(val)
+  ).optional(),
+  totalBudget: z.union([z.string(), z.number()]).transform(val => String(val)),
+  dailyBudget: z.union([z.string(), z.number()]).transform(val => String(val)),
+  clickBid: z.union([z.string(), z.number()]).transform(val => String(val)),
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
