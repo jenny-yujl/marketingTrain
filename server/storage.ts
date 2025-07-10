@@ -1,4 +1,11 @@
-import { campaigns, products, type Campaign, type Product, type InsertCampaign, type InsertProduct } from "@shared/schema";
+import {
+  campaigns,
+  products,
+  type Campaign,
+  type Product,
+  type InsertCampaign,
+  type InsertProduct,
+} from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 export interface IStorage {
@@ -6,9 +13,12 @@ export interface IStorage {
   getCampaign(id: number): Promise<Campaign | undefined>;
   getCampaigns(): Promise<Campaign[]>;
   createCampaign(campaign: InsertCampaign): Promise<Campaign>;
-  updateCampaign(id: number, campaign: Partial<InsertCampaign>): Promise<Campaign>;
+  updateCampaign(
+    id: number,
+    campaign: Partial<InsertCampaign>,
+  ): Promise<Campaign>;
   deleteCampaign(id: number): Promise<void>;
-  
+
   // Product operations
   getProduct(id: number): Promise<Product | undefined>;
   getProducts(): Promise<Product[]>;
@@ -29,10 +39,10 @@ export class DatabaseStorage implements IStorage {
       hasFullReduction: Boolean(dbCampaign.hasFullReduction),
     };
   }
-  
+
   // 安全解析JSON字段
   private parseJSONField(value: string | any, defaultValue: any = null): any {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       try {
         return JSON.parse(value);
       } catch {
@@ -44,7 +54,10 @@ export class DatabaseStorage implements IStorage {
   async getCampaign(id: number): Promise<Campaign | undefined> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
-    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
+    const [campaign] = await db
+      .select()
+      .from(campaigns)
+      .where(eq(campaigns.id, id));
     return campaign ? this.transformCampaignFromDB(campaign) : undefined;
   }
 
@@ -52,76 +65,97 @@ export class DatabaseStorage implements IStorage {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     const dbCampaigns = await db.select().from(campaigns);
-    return dbCampaigns.map(campaign => this.transformCampaignFromDB(campaign));
+    return dbCampaigns.map((campaign) =>
+      this.transformCampaignFromDB(campaign),
+    );
   }
 
   async createCampaign(insertCampaign: InsertCampaign): Promise<Campaign> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
-    
+
     // 处理数据格式转换
     const processedData = {
       ...insertCampaign,
       // 确保TEXT字段为字符串格式
-      placements: typeof insertCampaign.placements === 'string' 
-        ? insertCampaign.placements 
-        : JSON.stringify(insertCampaign.placements || []),
-      deviceTypes: typeof insertCampaign.deviceTypes === 'string' 
-        ? insertCampaign.deviceTypes 
-        : JSON.stringify(insertCampaign.deviceTypes || []),
-      interests: typeof insertCampaign.interests === 'string' 
-        ? insertCampaign.interests 
-        : JSON.stringify(insertCampaign.interests || []),
-      behaviors: typeof insertCampaign.behaviors === 'string' 
-        ? insertCampaign.behaviors 
-        : JSON.stringify(insertCampaign.behaviors || []),
-      weeklySchedule: typeof insertCampaign.weeklySchedule === 'string' 
-        ? insertCampaign.weeklySchedule 
-        : JSON.stringify(insertCampaign.weeklySchedule || []),
+      placements:
+        typeof insertCampaign.placements === "string"
+          ? insertCampaign.placements
+          : JSON.stringify(insertCampaign.placements || []),
+      deviceTypes:
+        typeof insertCampaign.deviceTypes === "string"
+          ? insertCampaign.deviceTypes
+          : JSON.stringify(insertCampaign.deviceTypes || []),
+      interests:
+        typeof insertCampaign.interests === "string"
+          ? insertCampaign.interests
+          : JSON.stringify(insertCampaign.interests || []),
+      behaviors:
+        typeof insertCampaign.behaviors === "string"
+          ? insertCampaign.behaviors
+          : JSON.stringify(insertCampaign.behaviors || []),
+      weeklySchedule:
+        typeof insertCampaign.weeklySchedule === "string"
+          ? insertCampaign.weeklySchedule
+          : JSON.stringify(insertCampaign.weeklySchedule || []),
     };
-    
+
     const result = await db.insert(campaigns).values(processedData);
-    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, result[0].insertId));
-    
+    const [campaign] = await db
+      .select()
+      .from(campaigns)
+      .where(eq(campaigns.id, result[0].insertId));
+
     // 转换返回的数据格式
     return this.transformCampaignFromDB(campaign);
   }
 
-  async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
+  async updateCampaign(
+    id: number,
+    updateData: Partial<InsertCampaign>,
+  ): Promise<Campaign> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
-    
+
     // 处理数据格式转换
     const processedData: any = { ...updateData, updatedAt: new Date() };
-    
+
     if (updateData.placements) {
-      processedData.placements = typeof updateData.placements === 'string' 
-        ? updateData.placements 
-        : JSON.stringify(updateData.placements);
+      processedData.placements =
+        typeof updateData.placements === "string"
+          ? updateData.placements
+          : JSON.stringify(updateData.placements);
     }
     if (updateData.deviceTypes) {
-      processedData.deviceTypes = typeof updateData.deviceTypes === 'string' 
-        ? updateData.deviceTypes 
-        : JSON.stringify(updateData.deviceTypes);
+      processedData.deviceTypes =
+        typeof updateData.deviceTypes === "string"
+          ? updateData.deviceTypes
+          : JSON.stringify(updateData.deviceTypes);
     }
     if (updateData.interests) {
-      processedData.interests = typeof updateData.interests === 'string' 
-        ? updateData.interests 
-        : JSON.stringify(updateData.interests);
+      processedData.interests =
+        typeof updateData.interests === "string"
+          ? updateData.interests
+          : JSON.stringify(updateData.interests);
     }
     if (updateData.behaviors) {
-      processedData.behaviors = typeof updateData.behaviors === 'string' 
-        ? updateData.behaviors 
-        : JSON.stringify(updateData.behaviors);
+      processedData.behaviors =
+        typeof updateData.behaviors === "string"
+          ? updateData.behaviors
+          : JSON.stringify(updateData.behaviors);
     }
     if (updateData.weeklySchedule) {
-      processedData.weeklySchedule = typeof updateData.weeklySchedule === 'string' 
-        ? updateData.weeklySchedule 
-        : JSON.stringify(updateData.weeklySchedule);
+      processedData.weeklySchedule =
+        typeof updateData.weeklySchedule === "string"
+          ? updateData.weeklySchedule
+          : JSON.stringify(updateData.weeklySchedule);
     }
-    
+
     await db.update(campaigns).set(processedData).where(eq(campaigns.id, id));
-    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id));
+    const [campaign] = await db
+      .select()
+      .from(campaigns)
+      .where(eq(campaigns.id, id));
     if (!campaign) throw new Error(`Campaign with id ${id} not found`);
     return this.transformCampaignFromDB(campaign);
   }
@@ -135,7 +169,10 @@ export class DatabaseStorage implements IStorage {
   async getProduct(id: number): Promise<Product | undefined> {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
-    const [product] = await db.select().from(products).where(eq(products.id, id));
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, id));
     return product || undefined;
   }
 
@@ -149,7 +186,10 @@ export class DatabaseStorage implements IStorage {
     const { db } = await import("./db");
     if (!db) throw new Error("Database not connected");
     const result = await db.insert(products).values(insertProduct);
-    const [product] = await db.select().from(products).where(eq(products.id, result[0].insertId));
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, result[0].insertId));
     return product;
   }
 }
@@ -165,7 +205,7 @@ export class MemStorage implements IStorage {
     this.products = new Map();
     this.currentCampaignId = 1;
     this.currentProductId = 1;
-    
+
     // Initialize with sample products
     this.initializeProducts();
   }
@@ -173,7 +213,7 @@ export class MemStorage implements IStorage {
   // 解析数组字段，兼容字符串和数组格式
   private parseArrayField(value: any, defaultValue: any[]): any[] {
     if (Array.isArray(value)) return value;
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       try {
         const parsed = JSON.parse(value);
         return Array.isArray(parsed) ? parsed : defaultValue;
@@ -189,7 +229,8 @@ export class MemStorage implements IStorage {
       {
         name: "高端护肤套装",
         description: "包含洁面、水、乳、精华四件套",
-        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200",
+        image:
+          "https://images.unsplash.com/photo-1556228578-8c89e6adf883?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200",
         originalPrice: "399.00",
         currentPrice: "299.00",
         category: "美妆护肤",
@@ -197,7 +238,8 @@ export class MemStorage implements IStorage {
       {
         name: "智能运动手表",
         description: "支持多种运动模式，健康监测",
-        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200",
+        image:
+          "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200",
         originalPrice: "1599.00",
         currentPrice: "1299.00",
         category: "数码产品",
@@ -205,14 +247,15 @@ export class MemStorage implements IStorage {
       {
         name: "无线蓝牙耳机",
         description: "降噪功能，超长续航",
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200",
+        image:
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200",
         originalPrice: "799.00",
         currentPrice: "599.00",
         category: "数码产品",
       },
     ];
 
-    sampleProducts.forEach(product => {
+    sampleProducts.forEach((product) => {
       this.createProduct(product);
     });
   }
@@ -254,7 +297,10 @@ export class MemStorage implements IStorage {
     return campaign;
   }
 
-  async updateCampaign(id: number, updateData: Partial<InsertCampaign>): Promise<Campaign> {
+  async updateCampaign(
+    id: number,
+    updateData: Partial<InsertCampaign>,
+  ): Promise<Campaign> {
     const existingCampaign = this.campaigns.get(id);
     if (!existingCampaign) {
       throw new Error(`Campaign with id ${id} not found`);
@@ -264,11 +310,21 @@ export class MemStorage implements IStorage {
       ...existingCampaign,
       ...updateData,
       status: updateData.status || existingCampaign.status || "draft",
-      placements: updateData.placements ? this.parseArrayField(updateData.placements, []) : existingCampaign.placements || [],
-      deviceTypes: updateData.deviceTypes ? this.parseArrayField(updateData.deviceTypes, []) : existingCampaign.deviceTypes || [],
-      interests: updateData.interests ? this.parseArrayField(updateData.interests, []) : existingCampaign.interests || [],
-      behaviors: updateData.behaviors ? this.parseArrayField(updateData.behaviors, []) : existingCampaign.behaviors || [],
-      weeklySchedule: updateData.weeklySchedule ? this.parseArrayField(updateData.weeklySchedule, []) : existingCampaign.weeklySchedule || [],
+      placements: updateData.placements
+        ? this.parseArrayField(updateData.placements, [])
+        : existingCampaign.placements || [],
+      deviceTypes: updateData.deviceTypes
+        ? this.parseArrayField(updateData.deviceTypes, [])
+        : existingCampaign.deviceTypes || [],
+      interests: updateData.interests
+        ? this.parseArrayField(updateData.interests, [])
+        : existingCampaign.interests || [],
+      behaviors: updateData.behaviors
+        ? this.parseArrayField(updateData.behaviors, [])
+        : existingCampaign.behaviors || [],
+      weeklySchedule: updateData.weeklySchedule
+        ? this.parseArrayField(updateData.weeklySchedule, [])
+        : existingCampaign.weeklySchedule || [],
       updatedAt: new Date(),
     };
     this.campaigns.set(id, updatedCampaign);
@@ -306,4 +362,4 @@ const checkDatabaseConnection = async () => {
 };
 
 // 暂时使用内存存储，稍后可动态切换
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
