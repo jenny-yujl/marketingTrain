@@ -70,18 +70,22 @@ SELECT JSON_VALID('{"test": "value"}') as json_support;
 
 ## ⚠️ 版本特定注意事项
 
-### MySQL 5.7使用者
-如需兼容MySQL 5.7，需要修改以下内容：
+### MySQL 5.7.5+使用者 ✅
+我们的SQL文件已经优化兼容MySQL 5.7.5+：
 
 ```sql
--- 替换默认JSON语法
--- 从: DEFAULT ('[]')
--- 改为: DEFAULT (JSON_ARRAY())
-
--- 示例修改
+-- 使用标准JSON函数语法
 `placements` JSON NOT NULL DEFAULT (JSON_ARRAY()),
+`device_types` JSON NOT NULL DEFAULT (JSON_ARRAY()),
 `interests` JSON NOT NULL DEFAULT (JSON_ARRAY()),
+`behaviors` JSON NOT NULL DEFAULT (JSON_ARRAY()),
+`weekly_schedule` JSON NOT NULL DEFAULT (JSON_ARRAY()),
 ```
+
+### 重要版本要求
+- **最低版本**: MySQL 5.7.5
+- **推荐版本**: MySQL 5.7.8+ (JSON功能更稳定)
+- **最佳版本**: MySQL 8.0+ (性能最优)
 
 ### MySQL 5.6及以下
 - 不支持JSON字段类型

@@ -6,6 +6,7 @@
 
 ### 1. database_mysql.sql (完整版)
 - **用途**: 生产环境使用
+- **MySQL版本**: 5.7.5+
 - **包含**: 完整表结构、索引、注释、示例数据、存储过程、视图
 - **特点**: 
   - 详细的中文注释
@@ -13,14 +14,24 @@
   - 外键约束
   - 示例存储过程
   - 数据库管理建议
+  - 版本兼容性检查
 
 ### 2. database_simple.sql (简化版)  
 - **用途**: 快速测试和开发
+- **MySQL版本**: 5.7.5+
 - **包含**: 基本表结构和示例数据
 - **特点**: 
   - 精简的建表语句
   - 基础示例数据
   - 易于理解和修改
+
+### 3. check-mysql-version.sql (版本检查)
+- **用途**: 验证MySQL版本兼容性
+- **功能**: 
+  - 检查MySQL版本
+  - 测试JSON功能
+  - 验证字符集支持
+  - 完整兼容性报告
 
 ## 🔧 使用步骤
 
@@ -39,7 +50,13 @@ mysql -u your_username -p qianchuan_system < database_mysql.sql
 mysql -u your_username -p qianchuan_system < database_simple.sql
 ```
 
-### 3. 验证导入
+### 3. 验证MySQL版本兼容性
+```bash
+# 运行版本检查脚本
+mysql -u your_username -p your_database < check-mysql-version.sql
+```
+
+### 4. 验证导入
 ```sql
 -- 检查表是否创建成功
 SHOW TABLES;

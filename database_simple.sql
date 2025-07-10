@@ -1,6 +1,10 @@
 -- ================================================
 -- 巨量千川系统 - 简化版MySQL建表语句
+-- 要求MySQL版本: 5.0+ (使用TEXT和TINYINT兼容更多版本)
 -- ================================================
+
+-- 版本检查
+SELECT VERSION() as mysql_version;
 
 -- 产品表
 CREATE TABLE `products` (
@@ -21,21 +25,21 @@ CREATE TABLE `campaigns` (
     `optimization_target` TEXT NOT NULL,
     `priority` TEXT NOT NULL,
     `promotion_scenario` TEXT NOT NULL,
-    `placements` JSON NOT NULL DEFAULT ('[]'),
-    `device_types` JSON NOT NULL DEFAULT ('[]'),
+    `placements` TEXT NOT NULL DEFAULT '[]',
+    `device_types` TEXT NOT NULL DEFAULT '[]',
     `product_id` INT NULL,
     `original_price` DECIMAL(10, 2) NULL,
     `current_price` DECIMAL(10, 2) NULL,
-    `has_time_limited_discount` BOOLEAN DEFAULT FALSE,
+    `has_time_limited_discount` TINYINT(1) DEFAULT 0,
     `discount_percentage` INT DEFAULT 0,
-    `has_full_reduction` BOOLEAN DEFAULT FALSE,
+    `has_full_reduction` TINYINT(1) DEFAULT 0,
     `full_reduction_threshold` DECIMAL(10, 2) NULL,
     `full_reduction_amount` DECIMAL(10, 2) NULL,
     `age_range` TEXT NOT NULL,
     `gender` TEXT NOT NULL,
     `location` TEXT NOT NULL,
-    `interests` JSON NOT NULL DEFAULT ('[]'),
-    `behaviors` JSON NOT NULL DEFAULT ('[]'),
+    `interests` TEXT NOT NULL DEFAULT '[]',
+    `behaviors` TEXT NOT NULL DEFAULT '[]',
     `campaign_type` TEXT NOT NULL,
     `start_time` TIMESTAMP NULL,
     `end_time` TIMESTAMP NULL,
@@ -43,7 +47,7 @@ CREATE TABLE `campaigns` (
     `daily_budget` DECIMAL(10, 2) NOT NULL,
     `bidding_strategy` TEXT NOT NULL,
     `click_bid` DECIMAL(10, 2) NOT NULL,
-    `weekly_schedule` JSON NOT NULL DEFAULT ('[]'),
+    `weekly_schedule` TEXT NOT NULL DEFAULT '[]',
     `status` TEXT NOT NULL DEFAULT 'draft',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

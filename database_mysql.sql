@@ -2,7 +2,16 @@
 -- 巨量千川直播推广教学系统 MySQL 数据库结构
 -- 生成时间: 2025-01-09
 -- 版本: 1.0
+-- 要求MySQL版本: 5.0+ (兼容更多版本)
 -- ================================================
+
+-- 检查MySQL版本兼容性
+SELECT 
+    CASE 
+        WHEN VERSION() >= '5.0' THEN '✅ MySQL版本兼容'
+        ELSE '❌ 需要MySQL 5.0或更高版本'
+    END as version_check,
+    VERSION() as current_version;
 
 -- 创建数据库（如果需要）
 -- CREATE DATABASE IF NOT EXISTS qianchuan_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -35,21 +44,21 @@ CREATE TABLE IF NOT EXISTS `campaigns` (
     `optimization_target` TEXT NOT NULL COMMENT '优化目标',
     `priority` TEXT NOT NULL COMMENT '优先级',
     `promotion_scenario` TEXT NOT NULL COMMENT '推广场景',
-    `placements` JSON NOT NULL DEFAULT ('[]') COMMENT '投放位置数组',
-    `device_types` JSON NOT NULL DEFAULT ('[]') COMMENT '设备类型数组',
+    `placements` TEXT NOT NULL DEFAULT '[]' COMMENT '投放位置数组(JSON格式)',
+    `device_types` TEXT NOT NULL DEFAULT '[]' COMMENT '设备类型数组(JSON格式)',
     `product_id` INT NULL COMMENT '关联产品ID',
     `original_price` DECIMAL(10, 2) NULL COMMENT '产品原价',
     `current_price` DECIMAL(10, 2) NULL COMMENT '产品现价',
-    `has_time_limited_discount` BOOLEAN DEFAULT FALSE COMMENT '是否有限时折扣',
+    `has_time_limited_discount` TINYINT(1) DEFAULT 0 COMMENT '是否有限时折扣(0=否,1=是)',
     `discount_percentage` INT DEFAULT 0 COMMENT '折扣百分比',
-    `has_full_reduction` BOOLEAN DEFAULT FALSE COMMENT '是否有满减',
+    `has_full_reduction` TINYINT(1) DEFAULT 0 COMMENT '是否有满减(0=否,1=是)',
     `full_reduction_threshold` DECIMAL(10, 2) NULL COMMENT '满减门槛',
     `full_reduction_amount` DECIMAL(10, 2) NULL COMMENT '满减金额',
     `age_range` TEXT NOT NULL COMMENT '年龄范围',
     `gender` TEXT NOT NULL COMMENT '性别',
     `location` TEXT NOT NULL COMMENT '地理位置',
-    `interests` JSON NOT NULL DEFAULT ('[]') COMMENT '兴趣标签数组',
-    `behaviors` JSON NOT NULL DEFAULT ('[]') COMMENT '行为标签数组',
+    `interests` TEXT NOT NULL DEFAULT '[]' COMMENT '兴趣标签数组(JSON格式)',
+    `behaviors` TEXT NOT NULL DEFAULT '[]' COMMENT '行为标签数组(JSON格式)',
     `campaign_type` TEXT NOT NULL COMMENT '活动类型',
     `start_time` TIMESTAMP NULL COMMENT '开始时间',
     `end_time` TIMESTAMP NULL COMMENT '结束时间',
@@ -57,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `campaigns` (
     `daily_budget` DECIMAL(10, 2) NOT NULL COMMENT '日预算',
     `bidding_strategy` TEXT NOT NULL COMMENT '出价策略',
     `click_bid` DECIMAL(10, 2) NOT NULL COMMENT '点击出价',
-    `weekly_schedule` JSON NOT NULL DEFAULT ('[]') COMMENT '周时间安排数组',
+    `weekly_schedule` TEXT NOT NULL DEFAULT '[]' COMMENT '周时间安排数组(JSON格式)',
     `status` TEXT NOT NULL DEFAULT 'draft' COMMENT '活动状态',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
