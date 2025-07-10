@@ -75,26 +75,46 @@ export const insertCampaignSchema = createInsertSchema(campaigns).omit({
   hasFullReduction: z.union([z.boolean(), z.number()]).transform(val => 
     typeof val === 'boolean' ? (val ? 1 : 0) : val
   ),
+  // INT字段转换
+  productId: z.union([z.number(), z.null(), z.undefined()]).transform(val => 
+    val === null || val === undefined ? null : Number(val)
+  ).optional(),
+  discountPercentage: z.union([z.number(), z.string()]).transform(val => Number(val)).optional(),
   // 将数字转换为字符串（decimal字段）
-  originalPrice: z.union([z.string(), z.number(), z.null()]).transform(val => 
-    val === null ? null : String(val)
+  originalPrice: z.union([z.string(), z.number(), z.null(), z.undefined()]).transform(val => 
+    val === null || val === undefined ? null : String(val)
   ).optional(),
-  currentPrice: z.union([z.string(), z.number(), z.null()]).transform(val => 
-    val === null ? null : String(val)
+  currentPrice: z.union([z.string(), z.number(), z.null(), z.undefined()]).transform(val => 
+    val === null || val === undefined ? null : String(val)
   ).optional(),
-  fullReductionThreshold: z.union([z.string(), z.number(), z.null()]).transform(val => 
-    val === null ? null : String(val)
+  fullReductionThreshold: z.union([z.string(), z.number(), z.null(), z.undefined()]).transform(val => 
+    val === null || val === undefined ? null : String(val)
   ).optional(),
-  fullReductionAmount: z.union([z.string(), z.number(), z.null()]).transform(val => 
-    val === null ? null : String(val)
+  fullReductionAmount: z.union([z.string(), z.number(), z.null(), z.undefined()]).transform(val => 
+    val === null || val === undefined ? null : String(val)
   ).optional(),
   totalBudget: z.union([z.string(), z.number()]).transform(val => String(val)),
   dailyBudget: z.union([z.string(), z.number()]).transform(val => String(val)),
   clickBid: z.union([z.string(), z.number()]).transform(val => String(val)),
+  // 时间字段处理
+  startTime: z.union([z.date(), z.string(), z.null(), z.undefined()]).transform(val => {
+    if (val === null || val === undefined) return null;
+    if (val instanceof Date) return val;
+    return new Date(val);
+  }).optional(),
+  endTime: z.union([z.date(), z.string(), z.null(), z.undefined()]).transform(val => {
+    if (val === null || val === undefined) return null;
+    if (val instanceof Date) return val;
+    return new Date(val);
+  }).optional(),
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
+}).extend({
+  // Product表的decimal字段转换
+  originalPrice: z.union([z.string(), z.number()]).transform(val => String(val)),
+  currentPrice: z.union([z.string(), z.number()]).transform(val => String(val)),
 });
 
 export type InsertCampaign = z.infer<typeof insertCampaignSchema>;
