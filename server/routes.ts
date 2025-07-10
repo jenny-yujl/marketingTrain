@@ -30,23 +30,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/campaigns", async (req, res) => {
     try {
-      console.log("接收到的原始数据:", JSON.stringify(req.body, null, 2));
       const validatedData = insertCampaignSchema.parse(req.body);
-      console.log("验证后的数据:", JSON.stringify(validatedData, null, 2));
       const campaign = await storage.createCampaign(validatedData);
       res.status(201).json(campaign);
     } catch (error) {
       console.error("保存活动失败:", error);
       if (error instanceof z.ZodError) {
         console.error("Zod验证错误:", error.errors);
-        return res.status(400).json({ 
-          message: "Invalid campaign data", 
-          errors: error.errors.map(err => ({
-            path: err.path.join('.'),
+        return res.status(400).json({
+          message: "Invalid campaign data",
+          errors: error.errors.map((err) => ({
+            path: err.path.join("."),
             message: err.message,
             received: err.received,
-            expected: err.expected
-          }))
+            expected: err.expected,
+          })),
         });
       }
       res.status(500).json({ message: "Failed to create campaign" });
@@ -56,23 +54,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/campaigns/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      console.log("更新活动，接收到的原始数据:", JSON.stringify(req.body, null, 2));
       const validatedData = insertCampaignSchema.partial().parse(req.body);
-      console.log("验证后的数据:", JSON.stringify(validatedData, null, 2));
       const campaign = await storage.updateCampaign(id, validatedData);
       res.json(campaign);
     } catch (error) {
       console.error("更新活动失败:", error);
       if (error instanceof z.ZodError) {
         console.error("Zod验证错误:", error.errors);
-        return res.status(400).json({ 
-          message: "Invalid campaign data", 
-          errors: error.errors.map(err => ({
-            path: err.path.join('.'),
+        return res.status(400).json({
+          message: "Invalid campaign data",
+          errors: error.errors.map((err) => ({
+            path: err.path.join("."),
             message: err.message,
             received: err.received,
-            expected: err.expected
-          }))
+            expected: err.expected,
+          })),
         });
       }
       res.status(500).json({ message: "Failed to update campaign" });
@@ -119,7 +115,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(product);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid product data", errors: error.errors });
+        return res
+          .status(400)
+          .json({ message: "Invalid product data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create product" });
     }
